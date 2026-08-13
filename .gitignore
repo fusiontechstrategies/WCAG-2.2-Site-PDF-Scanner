@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Generated accessibility data
+a11y_reports/
+accessibility_reports/
+reports/
+screenshots/
+downloaded-pdfs/
+pdf_cache/
+*.log
+*.part
+*.wcag-backup.*
+.*.wcag-*.tmp
+
+# Live-scan and local data
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.pdf
+pdf-urls.txt
+pdf_urls.txt
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
