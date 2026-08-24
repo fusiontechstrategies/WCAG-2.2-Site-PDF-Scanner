@@ -5,7 +5,7 @@
 
 aiohttp==3.14.3
 beautifulsoup4==4.15.0
-charset-normalizer==3.5.0
+charset-normalizer==3.5.1
 click==8.4.2
 cssutils==2.15.0
 defusedxml==0.7.1
