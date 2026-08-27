@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import tempfile
 import unittest
 from collections import defaultdict
@@ -114,6 +115,53 @@ class JsonReportRegressionTests(unittest.TestCase):
         self.assertEqual(payload["fixes_applied"], {"index.html": [{"status": "fixed"}]})
         self.assertIsInstance(report.broken_links, defaultdict)
         self.assertIsInstance(report.fixes_applied, defaultdict)
+
+
+class LocalPathRegressionTests(unittest.IsolatedAsyncioTestCase):
+    @staticmethod
+    def _tool(target: str) -> scanner.A11yPowerTool:
+        tool = object.__new__(scanner.A11yPowerTool)
+        tool.report = scanner.AccessibilityReport(target=target)
+        tool._analyze_page_content = AsyncMock()
+        return tool
+
+    async def test_relative_local_file_is_resolved_before_file_uri_conversion(self):
+        with tempfile.TemporaryDirectory(prefix="wcag-relative-file-") as temp_dir:
+            temp_path = Path(temp_dir)
+            source = temp_path / "index.html"
+            source.write_text("<!doctype html><html lang='en'><title>Sample</title></html>", encoding="utf-8")
+            previous_directory = Path.cwd()
+            try:
+                os.chdir(temp_path)
+                tool = self._tool("index.html")
+                await tool._run_for_local_file("index.html")
+            finally:
+                os.chdir(previous_directory)
+
+            tool._analyze_page_content.assert_awaited_once()
+            analyzed_uri = tool._analyze_page_content.await_args.args[1]
+            self.assertEqual(analyzed_uri, source.resolve().as_uri())
+            self.assertEqual(tool.report.all_files_analyzed, {str(source.resolve())})
+
+    async def test_relative_local_directory_resolves_each_html_file(self):
+        with tempfile.TemporaryDirectory(prefix="wcag-relative-directory-") as temp_dir:
+            temp_path = Path(temp_dir)
+            site_dir = temp_path / "site"
+            site_dir.mkdir()
+            source = site_dir / "index.html"
+            source.write_text("<!doctype html><html lang='en'><title>Sample</title></html>", encoding="utf-8")
+            previous_directory = Path.cwd()
+            try:
+                os.chdir(temp_path)
+                tool = self._tool("site")
+                await tool._run_for_local_dir("site")
+            finally:
+                os.chdir(previous_directory)
+
+            tool._analyze_page_content.assert_awaited_once()
+            analyzed_uri = tool._analyze_page_content.await_args.args[1]
+            self.assertEqual(analyzed_uri, source.resolve().as_uri())
+            self.assertEqual(tool.report.all_files_analyzed, {str(source.resolve())})
 
 
 if __name__ == "__main__":

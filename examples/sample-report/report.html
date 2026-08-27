@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: file:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+<title>WCAG Accessibility Audit: https://example.invalid/community-services</title>
+<style>
+:root {
+    --bg: #f8f9fc; --surface: #ffffff; --surface-alt: #f1f4f9; --border: #e2e8f0;
+    --text: #1e293b; --text-secondary: #64748b; --text-muted: #94a3b8;
+    --accent: #3b82f6; --accent-dark: #1e40af;
+    --critical: #dc2626; --critical-bg: #fef2f2; --critical-border: #fecaca;
+    --serious: #ea580c; --serious-bg: #fff7ed; --serious-border: #fed7aa;
+    --moderate: #d97706; --moderate-bg: #fffbeb; --moderate-border: #fde68a;
+    --minor: #2563eb; --minor-bg: #eff6ff; --minor-border: #bfdbfe;
+    --informational: #7c3aed; --info-bg: #f5f3ff; --info-border: #ddd6fe;
+    --success: #16a34a; --success-bg: #f0fdf4;
+    --radius: 12px; --radius-sm: 8px; --radius-xs: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.04);
+    --font: 'Segoe UI', Arial, sans-serif;
+    --mono: 'Cascadia Mono', Consolas, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1280px; margin: 0 auto; padding: 2rem; }
+
+/* ── Hero ── */
+.hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); border-radius: var(--radius); padding: 3rem; margin-bottom: 2rem; color: #fff; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59,130,246,.15) 0%, transparent 70%); }
+.hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; position: relative; z-index: 1; }
+.hero-brand { font-size: .85rem; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.5); font-weight: 500; }
+.hero-date { font-size: .85rem; color: rgba(255,255,255,.5); }
+.hero-title { font-size: 1.75rem; font-weight: 700; margin-bottom: .25rem; position: relative; z-index: 1; }
+.hero-target { font-size: 1rem; color: rgba(255,255,255,.7); word-break: break-all; position: relative; z-index: 1; }
+.evidence-notice { margin: -1rem 0 2rem; padding: 1rem 1.25rem; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e3a8a; border-radius: var(--radius-sm); line-height: 1.55; }
+
+/* ── KPI Strip ── */
+.kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: -1.5rem 2rem 2rem; position: relative; z-index: 2; }
+.kpi { background: var(--surface); border-radius: var(--radius-sm); padding: 1.25rem 1.5rem; box-shadow: var(--shadow-md); text-align: center; border-top: 3px solid var(--border); }
+.kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+.kpi-label { font-size: .8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-top: .25rem; }
+.kpi.scope { border-top-color: var(--accent); }
+.kpi.critical { border-top-color: var(--critical); }
+.kpi.serious { border-top-color: var(--serious); }
+.kpi.passed { border-top-color: var(--success); }
+
+/* ── Section ── */
+.section { margin-bottom: 2rem; }
+.section-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+.section-title::before { content: ''; width: 4px; height: 1.25rem; background: var(--accent); border-radius: 2px; }
+
+/* ── Overview Grid ── */
+.overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+@media (max-width: 768px) { .overview-grid { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border-radius: var(--radius-sm); padding: 1.5rem; box-shadow: var(--shadow); }
+.card-title { font-size: .95rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .04em; }
+.chart-container { display: flex; justify-content: center; }
+.chart-container img { max-width: 280px; height: auto; }
+
+/* ── Principle Cards ── */
+.principles-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 768px) { .principles-row { grid-template-columns: repeat(2, 1fr); } }
+.principle-card { background: var(--surface); border-radius: var(--radius-sm); padding: 1.25rem; box-shadow: var(--shadow); text-align: center; }
+.principle-icon { font-size: 1.5rem; margin-bottom: .25rem; }
+.principle-name { font-size: .85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: .25rem; }
+.principle-count { font-size: 1.75rem; font-weight: 700; }
+.principle-bar { height: 4px; background: var(--surface-alt); border-radius: 2px; margin: .5rem 0; }
+.principle-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .5s; }
+.principle-breakdown { display: flex; gap: .35rem; justify-content: center; flex-wrap: wrap; }
+.mini-badge { font-size: .7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.mini-badge.critical { background: var(--critical-bg); color: var(--critical); }
+.mini-badge.serious { background: var(--serious-bg); color: var(--serious); }
+
+/* ── Top Criteria ── */
+.top-crit-row { display: flex; align-items: center; padding: .6rem 0; border-bottom: 1px solid var(--border); gap: .75rem; }
+.top-crit-row:last-child { border-bottom: none; }
+.top-crit-id { font-family: var(--mono); font-size: .85rem; font-weight: 500; color: var(--accent-dark); min-width: 3.5rem; }
+.top-crit-name { flex: 1; font-size: .9rem; }
+.top-crit-count { font-weight: 700; font-size: 1rem; min-width: 2rem; text-align: right; }
+
+/* ── Filters ── */
+.filter-bar { background: var(--surface); border-radius: var(--radius-sm); padding: 1rem 1.25rem; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-bottom: 1.5rem; }
+.filter-bar label { font-size: .8rem; font-weight: 600; color: var(--text-secondary); }
+.filter-bar input, .filter-bar select { font-family: var(--font); font-size: .85rem; padding: .45rem .75rem; border: 1px solid var(--border); border-radius: var(--radius-xs); background: var(--surface-alt); color: var(--text); }
+.filter-bar input { flex: 1; min-width: 180px; }
+.filter-bar select { min-width: 120px; }
+
+/* ── Sticky toolbar: persistent controls so you never scroll back to navigate/filter ── */
+.toolbar { position: sticky; top: 0; z-index: 100; display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+    background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-md);
+    padding: .6rem .75rem; margin-bottom: 1.5rem; }
+.toolbar-pills { display: flex; gap: .35rem; }
+.pill { font-size: .78rem; font-weight: 600; text-decoration: none; color: var(--text-secondary);
+    padding: .35rem .7rem; border-radius: 999px; background: var(--surface-alt); white-space: nowrap; }
+.pill:hover { color: var(--text); background: #e2e8f0; }
+.toolbar input, .toolbar select { font-family: var(--font); font-size: .82rem; padding: .4rem .6rem;
+    border: 1px solid var(--border); border-radius: var(--radius-xs); background: var(--surface); color: var(--text); }
+.toolbar input { flex: 1; min-width: 150px; }
+.tbtn { font-family: var(--font); font-size: .78rem; font-weight: 600; cursor: pointer; color: var(--accent-dark);
+    background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius-xs); padding: .4rem .7rem; }
+.tbtn:hover { background: #e2e8f0; }
+.result-count { font-size: .78rem; color: var(--text-secondary); margin-left: auto; font-weight: 600; white-space: nowrap; }
+.section, .finding { scroll-margin-top: 84px; }
+.rank-badge { font-size: .68rem; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #1e293b; color: #fff; }
+.backtop { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 200; width: 2.75rem; height: 2.75rem;
+    border-radius: 50%; border: none; cursor: pointer; background: var(--accent); color: #fff; font-size: 1.15rem;
+    box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: opacity .2s; }
+.backtop.show { opacity: 1; pointer-events: auto; }
+
+/* ── Findings ── */
+.finding { background: var(--surface); border-radius: var(--radius-sm); box-shadow: var(--shadow); margin-bottom: .75rem; border-left: 5px solid var(--border); overflow: hidden; transition: box-shadow .2s; }
+.finding:hover { box-shadow: var(--shadow-md); }
+.finding.critical { border-left-color: var(--critical); }
+.finding.serious { border-left-color: var(--serious); }
+.finding.moderate { border-left-color: var(--moderate); }
+.finding.minor { border-left-color: var(--minor); }
+.finding.informational { border-left-color: var(--informational); }
+
+.finding-header { display: flex; justify-content: space-between; align-items: center; padding: .85rem 1.25rem; cursor: pointer; user-select: none; gap: .75rem; }
+.finding-header:hover { background: var(--surface-alt); }
+.finding-header:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; background: var(--surface-alt); }
+.finding-header-left, .finding-header-right { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.finding-header-right { flex-shrink: 0; }
+
+.sev-badge { font-size: .7rem; font-weight: 700; padding: 3px 10px; border-radius: 4px; text-transform: uppercase; letter-spacing: .04em; color: #fff; }
+.sev-badge.critical { background: var(--critical); }
+.sev-badge.serious { background: var(--serious); }
+.sev-badge.moderate { background: var(--moderate); }
+.sev-badge.minor { background: var(--minor); }
+.sev-badge.informational { background: var(--informational); }
+.finding-title { font-size: .9rem; font-weight: 600; }
+.level-badge { font-size: .7rem; padding: 2px 8px; border-radius: 4px; background: var(--surface-alt); color: var(--text-secondary); font-weight: 600; }
+.effort-badge { font-size: .7rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+.effort-badge.auto { background: #dcfce7; color: #166534; }
+.effort-badge.guided { background: #dbeafe; color: #1e40af; }
+.effort-badge.manual { background: #f1f5f9; color: #475569; }
+.status-badge { font-size: .7rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+.status-badge.fixed { background: var(--success-bg); color: var(--success); }
+.status-badge.unfixed { background: var(--critical-bg); color: var(--critical); }
+.chevron { font-size: .75rem; color: var(--text-muted); transition: transform .2s; }
+.finding.open .chevron { transform: rotate(180deg); }
+
+.finding-detail { display: none; padding: 0 1.25rem 1.25rem; }
+.finding.open .finding-detail { display: block; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: .5rem; }
+@media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
+.detail-section { background: var(--surface-alt); border-radius: var(--radius-xs); padding: 1rem; }
+.detail-section.whats-wrong { border-left: 3px solid var(--critical); }
+.detail-section.why-matters { border-left: 3px solid var(--serious); }
+.detail-section.how-to-fix { border-left: 3px solid var(--success); }
+.detail-label { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-secondary); margin-bottom: .5rem; }
+.detail-section p { font-size: .88rem; color: var(--text); margin-bottom: .5rem; }
+.location-line { font-size: .82rem !important; color: var(--text-secondary) !important; }
+.location-line code { font-family: var(--mono); font-size: .8rem; background: var(--surface); padding: 1px 5px; border-radius: 3px; }
+.fix-applied { background: var(--success-bg); padding: .5rem .75rem; border-radius: var(--radius-xs); font-size: .85rem; }
+.wcag-ref { display: inline-block; font-size: .82rem; color: var(--accent); text-decoration: none; font-weight: 600; margin-top: .25rem; }
+.wcag-ref:hover { text-decoration: underline; }
+
+.code-details { margin-top: .75rem; }
+.code-details summary { font-size: .82rem; color: var(--accent); cursor: pointer; font-weight: 600; }
+.code-details pre { background: #1e293b; color: #e2e8f0; padding: 1rem; border-radius: var(--radius-xs); overflow-x: auto; font-size: .8rem; line-height: 1.5; margin-top: .5rem; }
+.code-details code { font-family: var(--mono); }
+.screenshot { margin-top: .75rem; text-align: center; }
+.screenshot img { max-width: 100%; max-height: 300px; border-radius: var(--radius-xs); border: 1px solid var(--border); }
+
+/* ── 508 / reach / template badges ── */
+.badge-508 { font-size: .62rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #0f766e; color: #fff; letter-spacing: .03em; }
+.reach-badge { font-size: .7rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; background: #eef2ff; color: #3730a3; white-space: nowrap; }
+.tmpl-badge { font-size: .68rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; background: #fef3c7; color: #92400e; white-space: nowrap; }
+
+/* ── Section sub-text ── */
+.section-sub { font-size: .9rem; color: var(--text-secondary); margin-bottom: 1rem; max-width: 70ch; }
+
+/* ── Priority remediation plan ── */
+.remediation { display: flex; flex-direction: column; gap: .5rem; }
+.plan-row { display: grid; grid-template-columns: 2rem 5.5rem 5.5rem 1fr auto; align-items: center; gap: .75rem; padding: .65rem .9rem; background: var(--surface); border-radius: var(--radius-xs); box-shadow: var(--shadow); text-decoration: none; color: var(--text); border-left: 4px solid var(--border); transition: box-shadow .15s, transform .05s; }
+.plan-row:hover { box-shadow: var(--shadow-md); transform: translateX(2px); }
+.plan-row.critical { border-left-color: var(--critical); }
+.plan-row.serious { border-left-color: var(--serious); }
+.plan-row.moderate { border-left-color: var(--moderate); }
+.plan-row.minor { border-left-color: var(--minor); }
+.plan-row.informational { border-left-color: var(--informational); }
+.plan-rank { font-weight: 700; color: var(--text-muted); font-size: 1rem; text-align: center; }
+.plan-crit { font-family: var(--mono); font-size: .78rem; font-weight: 500; color: var(--accent-dark); display: flex; align-items: center; gap: .35rem; }
+.plan-title { font-size: .88rem; }
+.plan-fix { color: var(--text-secondary); }
+.plan-reach { font-size: .75rem; font-weight: 600; color: #3730a3; background: #eef2ff; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+@media (max-width: 768px) { .plan-row { grid-template-columns: 1.5rem auto 1fr; } .plan-crit, .plan-reach { display: none; } }
+
+/* ── Affected pages list ── */
+.affected { margin-top: .75rem; }
+.affected summary { font-size: .82rem; color: var(--accent); cursor: pointer; font-weight: 600; }
+.affected-list { list-style: none; margin: .5rem 0 0; padding: .5rem .75rem; background: var(--surface-alt); border-radius: var(--radius-xs); max-height: 320px; overflow-y: auto; }
+.affected-list li { font-size: .8rem; padding: .25rem 0; border-bottom: 1px solid var(--border); word-break: break-all; }
+.affected-list li:last-child { border-bottom: none; }
+.aff-lines { font-family: var(--mono); font-size: .72rem; color: var(--text-muted); }
+.aff-cap { font-size: .76rem; color: var(--text-muted); margin-bottom: .35rem; }
+
+/* ── Severity bar chart (replaces cramped pie) ── */
+.sevchart { display: flex; flex-direction: column; gap: .65rem; padding-top: .25rem; }
+.sevbar-row { display: grid; grid-template-columns: 7rem 1fr 2.5rem; align-items: center; gap: .85rem; }
+.sevbar-label { font-size: .92rem; font-weight: 600; }
+.sevbar-track { background: var(--surface-alt); border-radius: 6px; height: 1.6rem; overflow: hidden; }
+.sevbar-fill { height: 100%; border-radius: 6px; min-width: 3px; transition: width .5s ease; }
+.sevbar-fill.critical { background: var(--critical); }
+.sevbar-fill.serious { background: var(--serious); }
+.sevbar-fill.moderate { background: var(--moderate); }
+.sevbar-fill.minor { background: var(--minor); }
+.sevbar-fill.informational { background: var(--informational); }
+.sevbar-count { font-size: 1.15rem; font-weight: 700; text-align: right; }
+
+/* ── Footer ── */
+.report-footer { text-align: center; padding: 2rem 0 1rem; color: var(--text-muted); font-size: .8rem; }
+.no-chart { color: var(--text-muted); font-style: italic; }
+
+/* ── Print ── */
+@media print {
+    body { background: #fff; }
+    .page { padding: 0; }
+    .filter-bar, .toolbar, .backtop { display: none; }
+    .finding { break-inside: avoid; }
+    .finding-detail { display: block !important; }
+    .affected, .code-details { break-inside: avoid; }
+    .hero { background: #1e293b !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+
+    <!-- ═══ HERO ═══ -->
+    <div class="hero">
+        <div class="hero-top">
+            <div class="hero-brand">WCAG 2.2 Site and PDF Scanner: Accessibility Audit</div>
+            <div class="hero-date">2026-08-27</div>
+        </div>
+        <h1 class="hero-title">Accessibility Audit Report</h1>
+        <div class="hero-target">https://example.invalid/community-services</div>
+    </div>
+
+    <div class="evidence-notice" role="note"><strong>Automated evidence, not a conformance determination.</strong>
+    Passing a narrow automated check does not establish that an entire WCAG success criterion passes.
+    Manual evaluation with assistive technology and representative users remains necessary.</div>
+
+    <!-- ═══ KPI STRIP ═══ -->
+    <div class="kpi-strip">
+        <div class="kpi scope">
+            <div class="kpi-value" style="color:var(--accent)">4</div>
+            <div class="kpi-label">Criteria flagged</div>
+        </div>
+        <div class="kpi critical">
+            <div class="kpi-value" style="color:var(--critical)">2</div>
+            <div class="kpi-label">Critical</div>
+        </div>
+        <div class="kpi serious">
+            <div class="kpi-value" style="color:var(--serious)">0</div>
+            <div class="kpi-label">Serious</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-value">4</div>
+            <div class="kpi-label">Open Root Causes</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-value">1</div>
+            <div class="kpi-label">Pages Affected</div>
+        </div>
+        <div class="kpi passed">
+            <div class="kpi-value" style="color:var(--success)">33</div>
+            <div class="kpi-label">No failure detected</div>
+        </div>
+    </div>
+
+    <!-- Sticky toolbar with persistent controls -->
+    <div class="toolbar" role="region" aria-label="Report navigation and finding filters">
+        <div class="toolbar-pills">
+            <a href="#summary" class="pill">Summary</a>
+            <a href="#findings" class="pill">Findings</a>
+
+        </div>
+        <input type="text" id="fText" aria-label="Search findings" placeholder="Search findings…">
+        <select id="fSev" aria-label="Filter by severity"><option value="">Severity</option><option value="Critical">Critical</option><option value="Serious">Serious</option><option value="Moderate">Moderate</option><option value="Minor">Minor</option><option value="Informational">Informational</option></select>
+        <select id="fLevel" aria-label="Filter by WCAG level"><option value="">Level</option><option value="A">A</option><option value="AA">AA</option><option value="AAA">AAA</option></select>
+        <select id="fStatus" aria-label="Filter by finding status"><option value="">Status</option><option value="false">Open</option><option value="true">Fixed</option></select>
+        <select id="fPrinciple" aria-label="Filter by WCAG principle"><option value="">Principle</option><option value="1">Perceivable</option><option value="2">Operable</option><option value="3">Understandable</option><option value="4">Robust</option></select>
+        <select id="fMode" aria-label="Filter by analysis source"><option value="">Source</option><option value="Crawler">Crawler</option><option value="Static">Static</option><option value="Dynamic">Dynamic</option><option value="Axe-core">Axe-core</option><option value="Content-NLP">Content-NLP</option><option value="CSS">CSS</option><option value="Cross-Page">Cross-Page</option><option value="Validation">Validation</option><option value="Spelling">Spelling</option></select>
+        <button class="tbtn" id="expandAll">Expand all</button>
+        <button class="tbtn" id="collapseAll">Collapse all</button>
+        <span class="result-count" id="resultCount" aria-live="polite" aria-atomic="true"></span>
+    </div>
+
+    <!-- ═══ OVERVIEW ═══ -->
+    <div class="section" id="summary">
+        <h2 class="section-title">Executive Overview</h2>
+        <div class="overview-grid">
+            <div class="card">
+                <div class="card-title">Severity Distribution: Open Root Causes</div>
+                <div class="sevchart"><div class="sevbar-row"><span class="sevbar-label">Critical</span><div class="sevbar-track"><div class="sevbar-fill critical" style="width:100%"></div></div><span class="sevbar-count">2</span></div><div class="sevbar-row"><span class="sevbar-label">Serious</span><div class="sevbar-track"><div class="sevbar-fill serious" style="width:0%"></div></div><span class="sevbar-count">0</span></div><div class="sevbar-row"><span class="sevbar-label">Moderate</span><div class="sevbar-track"><div class="sevbar-fill moderate" style="width:100%"></div></div><span class="sevbar-count">2</span></div><div class="sevbar-row"><span class="sevbar-label">Minor</span><div class="sevbar-track"><div class="sevbar-fill minor" style="width:0%"></div></div><span class="sevbar-count">0</span></div><div class="sevbar-row"><span class="sevbar-label">Informational</span><div class="sevbar-track"><div class="sevbar-fill informational" style="width:0%"></div></div><span class="sevbar-count">0</span></div></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Most Affected Criteria</div>
+                <div class="top-crit-row"><span class="top-crit-id">1.1.1</span><span class="top-crit-name">Non-text Content</span><span class="top-crit-count">1</span></div><div class="top-crit-row"><span class="top-crit-id">3.3.2</span><span class="top-crit-name">Labels or Instructions</span><span class="top-crit-count">1</span></div><div class="top-crit-row"><span class="top-crit-id">1.3.5</span><span class="top-crit-name">Identify Input Purpose</span><span class="top-crit-count">1</span></div><div class="top-crit-row"><span class="top-crit-id">2.4.5</span><span class="top-crit-name">Multiple Ways</span><span class="top-crit-count">1</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ PRINCIPLES BREAKDOWN ═══ -->
+    <div class="section">
+        <h2 class="section-title">WCAG Principles Breakdown</h2>
+        <div class="principles-row">
+
+            <div class="principle-card">
+                <div class="principle-icon">&#128065;</div>
+                <div class="principle-name">Perceivable</div>
+                <div class="principle-count">2</div>
+                <div class="principle-bar"><div class="principle-bar-fill" style="width:50%"></div></div>
+                <div class="principle-breakdown">
+                    <span class="mini-badge critical">1 Critical</span>
+
+                </div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-icon">&#9000;</div>
+                <div class="principle-name">Operable</div>
+                <div class="principle-count">1</div>
+                <div class="principle-bar"><div class="principle-bar-fill" style="width:25%"></div></div>
+                <div class="principle-breakdown">
+
+
+                </div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-icon">&#128218;</div>
+                <div class="principle-name">Understandable</div>
+                <div class="principle-count">1</div>
+                <div class="principle-bar"><div class="principle-bar-fill" style="width:25%"></div></div>
+                <div class="principle-breakdown">
+                    <span class="mini-badge critical">1 Critical</span>
+
+                </div>
+            </div>
+            <div class="principle-card">
+                <div class="principle-icon">&#128736;</div>
+                <div class="principle-name">Robust</div>
+                <div class="principle-count">0</div>
+                <div class="principle-bar"><div class="principle-bar-fill" style="width:0%"></div></div>
+                <div class="principle-breakdown">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Findings in priority order, expanded in place -->
+    <div class="section" id="findings">
+        <h2 class="section-title">Findings: Priority Order</h2>
+        <p class="section-sub">4 root-cause issue(s) across 1 page(s) (4 total instances). <strong>0</strong> are template-level; fix once, resolved everywhere. Listed worst-first (top 10 ranked); expand any item in place, or use <strong>Expand all</strong> in the toolbar above. Automated target: <strong>WCAG AA</strong> &middot; Section 508 (2017).</p>
+        <div id="findings-list">
+
+            <div class="finding critical" id="grp-0" data-severity="Critical" data-level="A" data-criterion="1.1.1" data-mode="Static" data-fixed="false" data-principle="1">
+                <div class="finding-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grp-0-detail">
+                    <div class="finding-header-left">
+                        <span class="rank-badge" title="Priority rank">#1</span>
+                        <span class="sev-badge critical">Critical</span>
+                        <span class="finding-title">1.1.1: Non-text Content</span>
+                        <span class="level-badge">Level A</span>
+                        <span class="badge-508" title="WCAG 2.0 A/AA and Section 508 (2017) requirement">508</span>
+                    </div>
+                    <div class="finding-header-right">
+                        <span class="reach-badge">1 instance</span>
+
+                        <span class="effort-badge guided">Guided Fix</span>
+                        <span class="status-badge unfixed">&#10007; Open</span>
+                        <span class="chevron">&#9662;</span>
+                    </div>
+                </div>
+                <div class="finding-detail" id="grp-0-detail" aria-hidden="true">
+                    <div class="detail-grid">
+                        <div class="detail-section whats-wrong">
+                            <div class="detail-label">&#9888; What&rsquo;s Wrong</div>
+                            <p>&lt;img&gt; element is missing an &#39;alt&#39; attribute.</p>
+                            <p class="location-line"><strong>Selector:</strong> <code>#main &gt; img</code></p>
+                        </div>
+                        <div class="detail-section why-matters">
+                            <div class="detail-label">&#128101; Why It Matters</div>
+                            <p>Users of assistive technologies cannot understand the content or purpose of the image.</p>
+                        </div>
+                        <div class="detail-section how-to-fix">
+                            <div class="detail-label">&#128295; How to Fix</div>
+                            <p>Add an `alt` attribute. Use `alt=&quot;&quot;` for decorative images or provide a concise description.</p>
+                            <a class="wcag-ref" href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html" target="_blank" rel="noopener noreferrer">Read WCAG 1.1.1 guidance &rarr;</a>
+                        </div>
+                    </div>
+                    <details class="code-details"><summary>Representative source HTML</summary><pre><code>&lt;img src=&quot;program-overview.png&quot;/&gt;</code></pre></details>
+                    <details class="affected"><summary>Affected pages (1)</summary><ul class="affected-list"><li><a href="https://example.invalid/community-services" target="_blank" rel="noopener noreferrer">https://example.invalid/community-services</a></li></ul></details>
+
+                </div>
+            </div>
+
+            <div class="finding critical" id="grp-1" data-severity="Critical" data-level="A" data-criterion="3.3.2" data-mode="Static" data-fixed="false" data-principle="3">
+                <div class="finding-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grp-1-detail">
+                    <div class="finding-header-left">
+                        <span class="rank-badge" title="Priority rank">#2</span>
+                        <span class="sev-badge critical">Critical</span>
+                        <span class="finding-title">3.3.2: Labels or Instructions</span>
+                        <span class="level-badge">Level A</span>
+                        <span class="badge-508" title="WCAG 2.0 A/AA and Section 508 (2017) requirement">508</span>
+                    </div>
+                    <div class="finding-header-right">
+                        <span class="reach-badge">1 instance</span>
+
+                        <span class="effort-badge guided">Guided Fix</span>
+                        <span class="status-badge unfixed">&#10007; Open</span>
+                        <span class="chevron">&#9662;</span>
+                    </div>
+                </div>
+                <div class="finding-detail" id="grp-1-detail" aria-hidden="true">
+                    <div class="detail-grid">
+                        <div class="detail-section whats-wrong">
+                            <div class="detail-label">&#9888; What&rsquo;s Wrong</div>
+                            <p>Form control is not programmatically associated with an accessible label.</p>
+                            <p class="location-line"><strong>Selector:</strong> <code>#email</code></p>
+                        </div>
+                        <div class="detail-section why-matters">
+                            <div class="detail-label">&#128101; Why It Matters</div>
+                            <p>Screen reader users will not know what data to enter into the form field.</p>
+                        </div>
+                        <div class="detail-section how-to-fix">
+                            <div class="detail-label">&#128295; How to Fix</div>
+                            <p>Provide a `&lt;label&gt;` with a `for` attribute matching the input&#39;s `id`, wrap the input in a `&lt;label&gt;` tag, or use an `aria-label` attribute.</p>
+                            <a class="wcag-ref" href="https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html" target="_blank" rel="noopener noreferrer">Read WCAG 3.3.2 guidance &rarr;</a>
+                        </div>
+                    </div>
+                    <details class="code-details"><summary>Representative source HTML</summary><pre><code>&lt;input id=&quot;email&quot; name=&quot;email&quot; type=&quot;email&quot;/&gt;</code></pre></details>
+                    <details class="affected"><summary>Affected pages (1)</summary><ul class="affected-list"><li><a href="https://example.invalid/community-services" target="_blank" rel="noopener noreferrer">https://example.invalid/community-services</a></li></ul></details>
+
+                </div>
+            </div>
+
+            <div class="finding moderate" id="grp-2" data-severity="Moderate" data-level="AA" data-criterion="1.3.5" data-mode="Static" data-fixed="false" data-principle="1">
+                <div class="finding-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grp-2-detail">
+                    <div class="finding-header-left">
+                        <span class="rank-badge" title="Priority rank">#3</span>
+                        <span class="sev-badge moderate">Moderate</span>
+                        <span class="finding-title">1.3.5: Identify Input Purpose</span>
+                        <span class="level-badge">Level AA</span>
+
+                    </div>
+                    <div class="finding-header-right">
+                        <span class="reach-badge">1 instance</span>
+
+                        <span class="effort-badge guided">Guided Fix</span>
+                        <span class="status-badge unfixed">&#10007; Open</span>
+                        <span class="chevron">&#9662;</span>
+                    </div>
+                </div>
+                <div class="finding-detail" id="grp-2-detail" aria-hidden="true">
+                    <div class="detail-grid">
+                        <div class="detail-section whats-wrong">
+                            <div class="detail-label">&#9888; What&rsquo;s Wrong</div>
+                            <p>Input field (&lt;input id=&#39;email&#39; name=&#39;email&#39; type=&#39;email&#39;&gt;) is missing an &#39;autocomplete&#39; attribute or it&#39;s empty.</p>
+                            <p class="location-line"><strong>Selector:</strong> <code>#email</code></p>
+                        </div>
+                        <div class="detail-section why-matters">
+                            <div class="detail-label">&#128101; Why It Matters</div>
+                            <p>Autofill helps users with cognitive or mobility disabilities by reducing typing effort and entry errors.</p>
+                        </div>
+                        <div class="detail-section how-to-fix">
+                            <div class="detail-label">&#128295; How to Fix</div>
+                            <p>Add an `autocomplete` attribute. Based on heuristics, `autocomplete=&#39;email&#39;` might be suitable.</p>
+                            <a class="wcag-ref" href="https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose.html" target="_blank" rel="noopener noreferrer">Read WCAG 1.3.5 guidance &rarr;</a>
+                        </div>
+                    </div>
+                    <details class="code-details"><summary>Representative source HTML</summary><pre><code>&lt;input id=&quot;email&quot; name=&quot;email&quot; type=&quot;email&quot;/&gt;</code></pre></details>
+                    <details class="affected"><summary>Affected pages (1)</summary><ul class="affected-list"><li><a href="https://example.invalid/community-services" target="_blank" rel="noopener noreferrer">https://example.invalid/community-services</a></li></ul></details>
+
+                </div>
+            </div>
+
+            <div class="finding moderate" id="grp-3" data-severity="Moderate" data-level="AA" data-criterion="2.4.5" data-mode="Static" data-fixed="false" data-principle="2">
+                <div class="finding-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grp-3-detail">
+                    <div class="finding-header-left">
+                        <span class="rank-badge" title="Priority rank">#4</span>
+                        <span class="sev-badge moderate">Moderate</span>
+                        <span class="finding-title">2.4.5: Multiple Ways</span>
+                        <span class="level-badge">Level AA</span>
+                        <span class="badge-508" title="WCAG 2.0 A/AA and Section 508 (2017) requirement">508</span>
+                    </div>
+                    <div class="finding-header-right">
+                        <span class="reach-badge">1 instance</span>
+
+                        <span class="effort-badge manual">Manual Fix</span>
+                        <span class="status-badge unfixed">&#10007; Open</span>
+                        <span class="chevron">&#9662;</span>
+                    </div>
+                </div>
+                <div class="finding-detail" id="grp-3-detail" aria-hidden="true">
+                    <div class="detail-grid">
+                        <div class="detail-section whats-wrong">
+                            <div class="detail-label">&#9888; What&rsquo;s Wrong</div>
+                            <p>Page may not provide multiple ways to locate content (found 1 mechanism(s)).</p>
+                            <p class="location-line"><strong>Selector:</strong> <code>html &gt; body</code></p>
+                        </div>
+                        <div class="detail-section why-matters">
+                            <div class="detail-label">&#128101; Why It Matters</div>
+                            <p>Users with different abilities and preferences need multiple ways to find content (navigation, search, sitemap, etc.).</p>
+                        </div>
+                        <div class="detail-section how-to-fix">
+                            <div class="detail-label">&#128295; How to Fix</div>
+                            <p>Provide at least two of: navigation menu, search functionality, sitemap link, table of contents.</p>
+                            <a class="wcag-ref" href="https://www.w3.org/WAI/WCAG22/Understanding/multiple-ways.html" target="_blank" rel="noopener noreferrer">Read WCAG 2.4.5 guidance &rarr;</a>
+                        </div>
+                    </div>
+                    <details class="code-details"><summary>Representative source HTML</summary><pre><code>&lt;body&gt;
+&lt;header&gt;
+&lt;nav aria-label=&quot;Primary&quot;&gt;
+&lt;a href=&quot;#main&quot;&gt;Skip to services&lt;/a&gt;
+&lt;a href=&quot;#hours&quot;&gt;Office hours&lt;/a&gt;
+&lt;/nav&gt;
+&lt;/header&gt;
+&lt;main id=&quot;main&quot;&gt;
+&lt;h1&gt;Community services&lt;/h1&gt;
+&lt;img src=&quot;program-overview.png&quot;/&gt;
+&lt;p&gt;Use this synthetic page to learn how the scanner records evidence.&lt;/p&gt;
+&lt;h2&gt;Request information&lt;/h2&gt;
+&lt;form action=&quot;/sample-only&quot; method=&quot;post&quot;&gt;
+&lt;label for=&quot;full-name&quot;&gt;Full name&lt;/label&gt;
+&lt;input autocomplete=&quot;name&quot; id=&quot;full-name&quot; name=&quot;full-name&quot;/&gt;
+&lt;input id=&quot;email&quot; name=&quot;email&quot; type=&quot;email&quot;/&gt;
+&lt;button type=&quot;submit&quot;&gt;Send request&lt;/button&gt;
+&lt;/form&gt;
+&lt;h3 id=&quot;hours&quot;&gt;Office hours&lt;/h3&gt;
+&lt;p&gt;Monday through Friday, 9:00 a.m. to 5:00 p.m.&lt;/p&gt;
+&lt;/main&gt;
+&lt;footer&gt;
+&lt;p&gt;Training fixture only. No form data is transmitted.&lt;/p&gt;
+&lt;/footer&gt;
+&lt;/body&gt;</code></pre></details>
+                    <details class="affected"><summary>Affected pages (1)</summary><ul class="affected-list"><li><a href="https://example.invalid/community-services" target="_blank" rel="noopener noreferrer">https://example.invalid/community-services</a> <span class="aff-lines">line 8</span></li></ul></details>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <button class="backtop" id="backTop" title="Back to top" aria-label="Back to top">&#8593;</button>
+
+    <div class="report-footer">
+        Generated by WCAG 2.2 Site and PDF Scanner v5.0.1.dev0 &middot; WCAG AA automated target &middot; Analysis took 0.4s
+    </div>
+</main>
+
+<script>
+function setFindingOpen(header, open) {
+    const finding = header.parentElement;
+    const detail = document.getElementById(header.getAttribute('aria-controls'));
+    finding.classList.toggle('open', open);
+    header.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (detail) detail.setAttribute('aria-hidden', open ? 'false' : 'true');
+}
+
+document.querySelectorAll('.finding-header').forEach(h => {
+    h.addEventListener('click', () => setFindingOpen(h, h.getAttribute('aria-expanded') !== 'true'));
+    h.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setFindingOpen(h, h.getAttribute('aria-expanded') !== 'true');
+        }
+    });
+});
+
+const fText = document.getElementById('fText');
+const fSev = document.getElementById('fSev');
+const fLevel = document.getElementById('fLevel');
+const fMode = document.getElementById('fMode');
+const fStatus = document.getElementById('fStatus');
+const fPrinciple = document.getElementById('fPrinciple');
+
+const resultCount = document.getElementById('resultCount');
+function filterFindings() {
+    const text = fText.value.toLowerCase();
+    let shown = 0, total = 0;
+    document.querySelectorAll('.finding').forEach(f => {
+        total++;
+        const show =
+            (text === '' || f.innerText.toLowerCase().includes(text)) &&
+            (fSev.value === '' || f.dataset.severity === fSev.value) &&
+            (fLevel.value === '' || f.dataset.level === fLevel.value) &&
+            (fMode.value === '' || f.dataset.mode === fMode.value) &&
+            (fStatus.value === '' || f.dataset.fixed === fStatus.value) &&
+            (fPrinciple.value === '' || f.dataset.principle === fPrinciple.value);
+        f.style.display = show ? '' : 'none';
+        if (show) shown++;
+    });
+    if (resultCount) resultCount.textContent = shown + ' of ' + total + ' shown';
+}
+
+[fText, fSev, fLevel, fMode, fStatus, fPrinciple].forEach(el => {
+    el.addEventListener(el.tagName === 'INPUT' ? 'input' : 'change', filterFindings);
+});
+filterFindings();
+
+// Expand or collapse all to read the report linearly
+const expandAllBtn = document.getElementById('expandAll');
+const collapseAllBtn = document.getElementById('collapseAll');
+if (expandAllBtn) expandAllBtn.addEventListener('click', () =>
+    document.querySelectorAll('.finding-header').forEach(h => {
+        if (h.parentElement.style.display !== 'none') setFindingOpen(h, true);
+    }));
+if (collapseAllBtn) collapseAllBtn.addEventListener('click', () =>
+    document.querySelectorAll('.finding-header').forEach(h => setFindingOpen(h, false)));
+
+// Back-to-top floating button
+const backTopBtn = document.getElementById('backTop');
+if (backTopBtn) {
+    window.addEventListener('scroll', () => backTopBtn.classList.toggle('show', window.scrollY > 600));
+    backTopBtn.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+}
+
+// Expand and reveal a finding when jumped to from the remediation plan
+function openFromHash() {
+    if (location.hash && location.hash.indexOf('#grp-') === 0) {
+        const el = document.querySelector(location.hash);
+        if (el) {
+            const header = el.querySelector('.finding-header');
+            if (header) setFindingOpen(header, true);
+            el.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+    }
+}
+document.querySelectorAll('.plan-row').forEach(r => r.addEventListener('click', () => setTimeout(openFromHash, 0)));
+window.addEventListener('hashchange', openFromHash);
+openFromHash();
+</script>
+</body>
+</html>

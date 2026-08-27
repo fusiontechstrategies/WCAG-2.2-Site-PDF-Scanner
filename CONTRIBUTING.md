@@ -15,14 +15,16 @@ Contributions should preserve the project's core design: one Python runtime file
 ```powershell
 python -m py_compile WCAG_Site_PDF_Scanner.py
 python WCAG_Site_PDF_Scanner.py diagnostics
-python -m unittest -v tests.test_core_regressions
+python -m unittest -v tests.test_core_regressions tests.test_adoption_assets
 python -m unittest -v tests.test_keyboard_playwright
-ruff check WCAG_Site_PDF_Scanner.py tests
+ruff check WCAG_Site_PDF_Scanner.py examples scripts tests
 bandit -q -c pyproject.toml -r WCAG_Site_PDF_Scanner.py
 python -m pip_audit -r requirements.txt
 ```
 
 Changes to crawling, downloads, redirects, browser routing, parsers, or report rendering require focused security tests.
+
+Changes to package metadata or included files also require `python -m build`, `python -m twine check dist/*`, `python scripts/verify_distribution.py dist`, and isolated wheel and source-distribution installs. Follow [RELEASING.md](RELEASING.md); never reuse a published version for different bytes.
 
 ## Accessibility result rules
 
@@ -41,6 +43,7 @@ Changes to crawling, downloads, redirects, browser routing, parsers, or report r
 - Use deterministic sorting for reports and discovery results.
 - Add or extend embedded diagnostics for corrected defects.
 - Do not use em dashes in code, documentation, or generated text.
+- Keep the deterministic sample report synchronized with the production exporters.
 
 ## Pull requests
 

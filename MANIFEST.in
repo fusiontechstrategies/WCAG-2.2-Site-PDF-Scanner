@@ -1,0 +1,13 @@
+include .markdownlint-cli2.yaml
+include CHANGELOG.md
+include CONTRIBUTING.md
+include LICENSE
+include README.md
+include RELEASING.md
+include SECURITY.md
+include TESTING.md
+include THIRD_PARTY_NOTICES.md
+include requirements.txt
+include requirements-dev.txt
+recursive-include examples *.html *.json *.md *.png *.py
+recursive-include scripts *.py

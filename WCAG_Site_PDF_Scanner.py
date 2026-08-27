@@ -989,7 +989,7 @@ class ColorUtils:
 # CONSTANTS
 # ==============================================================================
 
-APP_VERSION = "5.0.0"
+APP_VERSION = "5.0.1.dev0"
 APP_NAME = "WCAG 2.2 Site and PDF Scanner"
 DEFAULT_USER_AGENT = f"WCAG-Site-PDF-Scanner/{APP_VERSION} (+accessibility testing)"
 
@@ -5494,7 +5494,7 @@ class ReportGenerator:
             rank_badge = f'<span class="rank-badge" title="Priority rank">#{idx + 1}</span>' if (g['open'] and idx < 10) else ''
             issues_html_parts.append(f'''
             <div class="finding {sev_class}" id="grp-{idx}" data-severity="{g['severity'].value}" data-level="{g['level'].value}" data-criterion="{_esc(g['criterion'])}" data-mode="{g['mode'].value}" data-fixed="{'false' if g['open'] else 'true'}" data-principle="{_esc(g['criterion'].split('.')[0])}">
-                <div class="finding-header">
+                <div class="finding-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grp-{idx}-detail">
                     <div class="finding-header-left">
                         {rank_badge}
                         <span class="sev-badge {sev_class}">{g['severity'].value}</span>
@@ -5510,7 +5510,7 @@ class ReportGenerator:
                         <span class="chevron">&#9662;</span>
                     </div>
                 </div>
-                <div class="finding-detail">
+                <div class="finding-detail" id="grp-{idx}-detail" aria-hidden="true">
                     <div class="detail-grid">
                         <div class="detail-section whats-wrong">
                             <div class="detail-label">&#9888; What&rsquo;s Wrong</div>
@@ -5606,7 +5606,7 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
 .evidence-notice {{ margin: -1rem 0 2rem; padding: 1rem 1.25rem; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e3a8a; border-radius: var(--radius-sm); line-height: 1.55; }}
 
 /* ── KPI Strip ── */
-.kpi-strip {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: -1.5rem 2rem 2rem; position: relative; z-index: 2; }}
+.kpi-strip {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: -1.5rem 2rem 2rem; position: relative; z-index: 2; }}
 .kpi {{ background: var(--surface); border-radius: var(--radius-sm); padding: 1.25rem 1.5rem; box-shadow: var(--shadow-md); text-align: center; border-top: 3px solid var(--border); }}
 .kpi-value {{ font-size: 2rem; font-weight: 700; line-height: 1.1; }}
 .kpi-label {{ font-size: .8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-top: .25rem; }}
@@ -5690,6 +5690,7 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
 
 .finding-header {{ display: flex; justify-content: space-between; align-items: center; padding: .85rem 1.25rem; cursor: pointer; user-select: none; gap: .75rem; }}
 .finding-header:hover {{ background: var(--surface-alt); }}
+.finding-header:focus-visible {{ outline: 3px solid var(--accent); outline-offset: -3px; background: var(--surface-alt); }}
 .finding-header-left, .finding-header-right {{ display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }}
 .finding-header-right {{ flex-shrink: 0; }}
 
@@ -5797,7 +5798,7 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
 </style>
 </head>
 <body>
-<div class="page">
+<main class="page">
 
     <!-- ═══ HERO ═══ -->
     <div class="hero">
@@ -5805,11 +5806,11 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
             <div class="hero-brand">WCAG 2.2 Site and PDF Scanner: Accessibility Audit</div>
             <div class="hero-date">{self.report.timestamp[:10]}</div>
         </div>
-        <div class="hero-title">Accessibility Audit Report</div>
+        <h1 class="hero-title">Accessibility Audit Report</h1>
         <div class="hero-target">{_esc(self.report.target)}</div>
     </div>
 
-    <div class="evidence-notice"><strong>Automated evidence, not a conformance determination.</strong>
+    <div class="evidence-notice" role="note"><strong>Automated evidence, not a conformance determination.</strong>
     Passing a narrow automated check does not establish that an entire WCAG success criterion passes.
     Manual evaluation with assistive technology and representative users remains necessary.</div>
 
@@ -5842,26 +5843,26 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
     </div>
 
     <!-- Sticky toolbar with persistent controls -->
-    <div class="toolbar">
+    <div class="toolbar" role="region" aria-label="Report navigation and finding filters">
         <div class="toolbar-pills">
             <a href="#summary" class="pill">Summary</a>
             <a href="#findings" class="pill">Findings</a>
             {broken_pill}
         </div>
-        <input type="text" id="fText" placeholder="Search findings…">
-        <select id="fSev"><option value="">Severity</option>{sev_options}</select>
-        <select id="fLevel"><option value="">Level</option>{level_options}</select>
-        <select id="fStatus"><option value="">Status</option><option value="false">Open</option><option value="true">Fixed</option></select>
-        <select id="fPrinciple"><option value="">Principle</option><option value="1">Perceivable</option><option value="2">Operable</option><option value="3">Understandable</option><option value="4">Robust</option></select>
-        <select id="fMode"><option value="">Source</option>{mode_options}</select>
+        <input type="text" id="fText" aria-label="Search findings" placeholder="Search findings…">
+        <select id="fSev" aria-label="Filter by severity"><option value="">Severity</option>{sev_options}</select>
+        <select id="fLevel" aria-label="Filter by WCAG level"><option value="">Level</option>{level_options}</select>
+        <select id="fStatus" aria-label="Filter by finding status"><option value="">Status</option><option value="false">Open</option><option value="true">Fixed</option></select>
+        <select id="fPrinciple" aria-label="Filter by WCAG principle"><option value="">Principle</option><option value="1">Perceivable</option><option value="2">Operable</option><option value="3">Understandable</option><option value="4">Robust</option></select>
+        <select id="fMode" aria-label="Filter by analysis source"><option value="">Source</option>{mode_options}</select>
         <button class="tbtn" id="expandAll">Expand all</button>
         <button class="tbtn" id="collapseAll">Collapse all</button>
-        <span class="result-count" id="resultCount"></span>
+        <span class="result-count" id="resultCount" aria-live="polite" aria-atomic="true"></span>
     </div>
 
     <!-- ═══ OVERVIEW ═══ -->
     <div class="section" id="summary">
-        <div class="section-title">Executive Overview</div>
+        <h2 class="section-title">Executive Overview</h2>
         <div class="overview-grid">
             <div class="card">
                 <div class="card-title">Severity Distribution: Open Root Causes</div>
@@ -5876,7 +5877,7 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
 
     <!-- ═══ PRINCIPLES BREAKDOWN ═══ -->
     <div class="section">
-        <div class="section-title">WCAG Principles Breakdown</div>
+        <h2 class="section-title">WCAG Principles Breakdown</h2>
         <div class="principles-row">
             {principle_cards}
         </div>
@@ -5884,7 +5885,7 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
 
     <!-- Findings in priority order, expanded in place -->
     <div class="section" id="findings">
-        <div class="section-title">Findings: Priority Order</div>
+        <h2 class="section-title">Findings: Priority Order</h2>
         <p class="section-sub">{root_cause_count} root-cause issue(s) across {pages_affected} page(s) ({total_issues} total instances). <strong>{template_issue_count}</strong> are template-level; fix once, resolved everywhere. Listed worst-first (top 10 ranked); expand any item in place, or use <strong>Expand all</strong> in the toolbar above. Automated target: <strong>{conformance_label}</strong> &middot; Section 508 (2017).</p>
         <div id="findings-list">
             {issues_html}
@@ -5898,11 +5899,25 @@ body {{ font-family: var(--font); background: var(--bg); color: var(--text); lin
     <div class="report-footer">
         Generated by {APP_NAME} v{APP_VERSION} &middot; WCAG {self.report.wcag_level_tested.value} automated target &middot; Analysis took {self.report.analysis_duration:.1f}s
     </div>
-</div>
+</main>
 
 <script>
+function setFindingOpen(header, open) {{
+    const finding = header.parentElement;
+    const detail = document.getElementById(header.getAttribute('aria-controls'));
+    finding.classList.toggle('open', open);
+    header.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (detail) detail.setAttribute('aria-hidden', open ? 'false' : 'true');
+}}
+
 document.querySelectorAll('.finding-header').forEach(h => {{
-    h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+    h.addEventListener('click', () => setFindingOpen(h, h.getAttribute('aria-expanded') !== 'true'));
+    h.addEventListener('keydown', event => {{
+        if (event.key === 'Enter' || event.key === ' ') {{
+            event.preventDefault();
+            setFindingOpen(h, h.getAttribute('aria-expanded') !== 'true');
+        }}
+    }});
 }});
 
 const fText = document.getElementById('fText');
@@ -5940,9 +5955,11 @@ filterFindings();
 const expandAllBtn = document.getElementById('expandAll');
 const collapseAllBtn = document.getElementById('collapseAll');
 if (expandAllBtn) expandAllBtn.addEventListener('click', () =>
-    document.querySelectorAll('.finding').forEach(f => {{ if (f.style.display !== 'none') f.classList.add('open'); }}));
+    document.querySelectorAll('.finding-header').forEach(h => {{
+        if (h.parentElement.style.display !== 'none') setFindingOpen(h, true);
+    }}));
 if (collapseAllBtn) collapseAllBtn.addEventListener('click', () =>
-    document.querySelectorAll('.finding').forEach(f => f.classList.remove('open')));
+    document.querySelectorAll('.finding-header').forEach(h => setFindingOpen(h, false)));
 
 // Back-to-top floating button
 const backTopBtn = document.getElementById('backTop');
@@ -5955,7 +5972,11 @@ if (backTopBtn) {{
 function openFromHash() {{
     if (location.hash && location.hash.indexOf('#grp-') === 0) {{
         const el = document.querySelector(location.hash);
-        if (el) {{ el.classList.add('open'); el.scrollIntoView({{behavior: 'smooth', block: 'start'}}); }}
+        if (el) {{
+            const header = el.querySelector('.finding-header');
+            if (header) setFindingOpen(header, true);
+            el.scrollIntoView({{behavior: 'smooth', block: 'start'}});
+        }}
     }}
 }}
 document.querySelectorAll('.plan-row').forEach(r => r.addEventListener('click', () => setTimeout(openFromHash, 0)));
@@ -5964,6 +5985,11 @@ openFromHash();
 </script>
 </body>
 </html>'''
+
+        # Interpolated optional sections can leave indentation on otherwise blank lines.
+        # Normalize only whitespace-only lines so generated fixtures stay diff-clean without
+        # altering meaningful spaces inside report evidence.
+        html_template = re.sub(r'(?m)^[ \t]+$', '', html_template)
 
         try:
             with open(path, 'w', encoding='utf-8') as f:
@@ -6832,7 +6858,8 @@ class A11yPowerTool:
 
     async def _run_for_local_dir(self, dir_path: str):
         """Run analysis for local directory."""
-        html_files = sorted(list(Path(dir_path).rglob('*.html')) + list(Path(dir_path).rglob('*.htm')))
+        resolved_dir = Path(dir_path).resolve()
+        html_files = sorted(list(resolved_dir.rglob('*.html')) + list(resolved_dir.rglob('*.htm')))
         console.print(f"Found {len(html_files)} HTML files to analyze in '{dir_path}'...")
 
         with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"),
@@ -6852,10 +6879,11 @@ class A11yPowerTool:
     async def _run_for_local_file(self, file_path: str):
         """Run analysis for single local file."""
         console.print(f"Analyzing single file: {file_path}")
-        file_uri = Path(file_path).as_uri()
+        resolved_path = Path(file_path).resolve()
+        file_uri = resolved_path.as_uri()
         try:
-            content = Path(file_path).read_text(encoding='utf-8')
-            self.report.all_files_analyzed.add(str(Path(file_path).resolve()))
+            content = resolved_path.read_text(encoding='utf-8')
+            self.report.all_files_analyzed.add(str(resolved_path))
             await self._analyze_page_content(content, file_uri, page=None)
         except Exception as e:
             logger.error(f"Could not analyze file {file_path}: {e}")
@@ -8486,7 +8514,7 @@ def main() -> None:
             candidate_path.is_file() and candidate_path.suffix.lower() == '.pdf'
         )
         args.insert(0, 'pdf' if use_pdf else 'web')
-    cli.main(args=args, prog_name='WCAG_Site_PDF_Scanner.py')
+    cli.main(args=args, prog_name=Path(sys.argv[0]).name)
 
 
 if __name__ == '__main__':

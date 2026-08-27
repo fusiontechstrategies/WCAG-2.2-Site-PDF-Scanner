@@ -1,12 +1,67 @@
 # WCAG 2.2 Site and PDF Scanner
 
-One Python file. Two accessibility surfaces. Evidence you can actually defend.
+[![CI](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/codeql.yml/badge.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/codeql.yml)
+[![Python 3.10 through 3.14](https://img.shields.io/badge/Python-3.10%20through%203.14-3776AB.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/LICENSE)
+
+One Python runtime file. Two accessibility surfaces. Evidence you can inspect and defend.
 
 WCAG 2.2 Site and PDF Scanner examines websites, local HTML, and PDF documents through one interactive application. It combines fast source analysis, optional real-browser testing with axe-core, bounded site crawling, conservative PDF structure inspection, PDF discovery, and accessible reports.
 
 The scanner deliberately avoids claiming that automation proves conformance. Every result describes what was tested, what evidence was observed, and where human review is still required.
 
 > Automated testing finds only some accessibility barriers. It does not establish WCAG, Section 508, or PDF/UA conformance. Complete evaluation requires manual review, assistive-technology testing, and judgment about the content and its purpose.
+
+## See the output first
+
+[![Preview of the synthetic accessibility audit report](https://raw.githubusercontent.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/main/examples/sample-report/report-preview.png)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-report/report.html)
+
+The preview comes from the production report generator using a deliberately flawed, synthetic page. Download and open the [interactive HTML fixture](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-report/report.html), inspect its [structured JSON](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-report/report.json), and review the [input page](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-site/index.html). The reserved `.invalid` target is never fetched, and no customer or live-scan data is stored in the repository.
+
+## Five-minute local walkthrough
+
+This first run analyzes only the included synthetic HTML file. It does not contact a target website and does not require a Chromium download.
+
+```powershell
+git clone https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner.git
+cd WCAG-2.2-Site-PDF-Scanner
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python WCAG_Site_PDF_Scanner.py web examples\sample-site\index.html `
+  --output-dir a11y_reports `
+  --report-formats html,json `
+  --no-spell-check
+```
+
+On macOS or Linux, use the shell form:
+
+```bash
+git clone https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner.git
+cd WCAG-2.2-Site-PDF-Scanner
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python WCAG_Site_PDF_Scanner.py web examples/sample-site/index.html \
+  --output-dir a11y_reports \
+  --report-formats html,json \
+  --no-spell-check
+```
+
+Then open `a11y_reports/report.html` locally.
+
+## Choose a workflow
+
+| Goal | Start here | Important boundary |
+|---|---|---|
+| Review one public page | `web URL --scope page` | Dynamic checks need Playwright Chromium. |
+| Inventory a public site | `web URL --scope site --max-urls 500` | Set a safety cap and use a considerate crawl delay. |
+| Inspect local source | `web PATH` | Local files receive static analysis; serve them locally for browser behavior. |
+| Inspect PDF evidence | `pdf PATH_OR_URL` | Results are conservative evidence, not PDF/UA certification. |
+| Gate a build | Add `--ci-mode` | The command fails on open critical or serious automated findings. |
 
 ## Highlights
 
@@ -49,7 +104,9 @@ Read [SECURITY.md](SECURITY.md) before scanning untrusted or internal content.
 
 ## Installation
 
-Create and activate a virtual environment, then install the pinned dependencies:
+### Supported source installation
+
+Create and activate a virtual environment from a cloned repository, then install the pinned runtime dependencies:
 
 ```powershell
 python -m venv .venv
@@ -60,6 +117,28 @@ python -m playwright install chromium
 ```
 
 On macOS or Linux, activate with `source .venv/bin/activate`.
+
+### Local package and pipx validation
+
+The repository is package-ready for local validation, but a public PyPI release has not been announced. Do not assume that an unrelated package with a similar name is this project.
+
+Install the current checkout into an active virtual environment:
+
+```powershell
+python -m pip install .
+wcag-site-pdf-scanner diagnostics
+```
+
+Or install a trusted local checkout into a pipx-managed environment:
+
+```powershell
+pipx install .
+wcag-site-pdf-scanner diagnostics
+```
+
+Pipx separates Python package environments; it is not a security sandbox. Review and trust the checkout before installing it because installation and scanner commands run with your user account's privileges.
+
+Both installed forms preserve the original `WCAG_Site_PDF_Scanner.py` module and add the `wcag-site-pdf-scanner` command. The source-file commands in this README remain valid.
 
 Optional language analysis uses NLTK data that is never downloaded automatically. Install it explicitly if needed:
 
@@ -215,9 +294,9 @@ Scan only systems and documents you own or are authorized to test. Use conservat
 
 ## Development
 
-The project intentionally keeps all Python runtime and test logic in one file. Repository support files remain at the root to preserve a flat structure.
+The production runtime remains in one Python module. Focused regression tests, examples, and release checks are kept in separate support files.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [TESTING.md](TESTING.md), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md), [RELEASING.md](RELEASING.md), [SECURITY.md](SECURITY.md), [TESTING.md](TESTING.md), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 
