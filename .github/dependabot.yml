@@ -12,9 +12,13 @@ updates:
       default-days: 7
     versioning-strategy: "increase-if-necessary"
     groups:
-      python-dependencies:
-        patterns:
-          - "*"
+      python-runtime-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      python-development-dependencies:
+        dependency-type: "development"
         update-types:
           - "minor"
           - "patch"

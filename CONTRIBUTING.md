@@ -5,7 +5,7 @@ Contributions should preserve the project's core design: one Python runtime file
 ## Before opening a change
 
 1. Create a virtual environment.
-2. Install `requirements.txt`.
+2. Install `requirements-dev.txt`, which includes the runtime and validation dependencies.
 3. Install Chromium with `python -m playwright install chromium` when changing browser behavior.
 4. Keep all Python runtime and embedded self-test logic in `WCAG_Site_PDF_Scanner.py`.
 5. Do not commit generated reports, downloaded PDFs, credentials, production URLs, or live-scan data.
