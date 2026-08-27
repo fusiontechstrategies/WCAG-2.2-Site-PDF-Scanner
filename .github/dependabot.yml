@@ -12,6 +12,29 @@ updates:
       default-days: 7
     versioning-strategy: "increase-if-necessary"
     groups:
-      python-dependencies:
+      python-runtime-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      python-development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:30"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
