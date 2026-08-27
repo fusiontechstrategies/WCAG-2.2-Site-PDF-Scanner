@@ -46,6 +46,15 @@ class PublicDocumentationTests(unittest.TestCase):
                     missing_links.append(f"{path.relative_to(REPOSITORY_ROOT)} -> {raw_target}")
         self.assertEqual(missing_links, [])
 
+    def test_readme_sample_links_follow_the_current_checkout(self):
+        readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("(examples/sample-report/report-preview.png)", readme)
+        self.assertIn("](examples/sample-report/report.html)", readme)
+        self.assertIn("](examples/sample-report/report.json)", readme)
+        self.assertIn("](examples/sample-site/index.html)", readme)
+        self.assertNotIn("/main/examples/sample-report/", readme)
+        self.assertNotIn("/main/examples/sample-site/", readme)
+
 
 class PackageMetadataTests(unittest.TestCase):
     def test_source_and_package_versions_match(self):

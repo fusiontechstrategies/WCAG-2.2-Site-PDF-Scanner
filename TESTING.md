@@ -10,7 +10,7 @@ The `5.0.1.dev0` development tree was validated on August 27, 2026. This is deve
 
 - The pinned runtime dependencies and resolved development dependencies were installed separately on Python 3.10.21, 3.12.10, and 3.14.7 on Windows.
 - All 14 embedded offline diagnostics passed on each interpreter, for 42 successful diagnostic checks.
-- All 11 core and adoption regression tests passed on each interpreter, for 33 successful test runs.
+- All 12 core and adoption regression tests passed on each interpreter, for 36 successful test runs.
 - All four browser report tests passed on each interpreter, for 12 successful Playwright test runs.
 - Ruff, Bandit, bytecode compilation, and dependency consistency checks passed on each interpreter.
 
@@ -28,7 +28,7 @@ The `5.0.1.dev0` development tree was validated on August 27, 2026. This is deve
 
 - pip-audit reported no known vulnerabilities in either requirements file at test time.
 - Gitleaks reported no findings in the complete commit history or the proposed tracked project files.
-- markdownlint, actionlint, YAML parsing, and relative Markdown link checks passed.
+- markdownlint, actionlint, YAML parsing, and relative Markdown link checks passed. External HTTP(S) destinations were not part of the relative-link check.
 - The package inspector confirmed safe archive paths, expected metadata and entry points, exact dependency metadata, and source bytes matching the repository.
 - The CodeQL and Gitleaks workflows passed local syntax and action pinning review. Their hosted scans must still pass on GitHub before merge.
 

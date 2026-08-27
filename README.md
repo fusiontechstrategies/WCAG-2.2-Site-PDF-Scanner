@@ -15,9 +15,9 @@ The scanner deliberately avoids claiming that automation proves conformance. Eve
 
 ## See the output first
 
-[![Preview of the synthetic accessibility audit report](https://raw.githubusercontent.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/main/examples/sample-report/report-preview.png)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-report/report.html)
+[![Preview of the synthetic accessibility audit report](examples/sample-report/report-preview.png)](examples/sample-report/report.html)
 
-The preview comes from the production report generator using a deliberately flawed, synthetic page. Download and open the [interactive HTML fixture](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-report/report.html), inspect its [structured JSON](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-report/report.json), and review the [input page](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/examples/sample-site/index.html). The reserved `.invalid` target is never fetched, and no customer or live-scan data is stored in the repository.
+The preview comes from the production report generator using a deliberately flawed, synthetic page. Download and open the [interactive HTML fixture](examples/sample-report/report.html), inspect its [structured JSON](examples/sample-report/report.json), and review the [input page](examples/sample-site/index.html). The reserved `.invalid` target is never fetched, and no customer or live-scan data is stored in the repository.
 
 ## Five-minute local walkthrough
 
