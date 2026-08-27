@@ -10,7 +10,7 @@
 
 ### Changed
 
-- Extended Dependabot coverage to GitHub Actions, separated runtime and development update groups, and kept major Python upgrades separate from grouped minor and patch updates
+- Extended Dependabot coverage to GitHub Actions, separated runtime and development update groups, and kept major Python and GitHub Actions upgrades separate from grouped minor and patch updates
 
 ## 5.0.0 - 2026-08-13
 

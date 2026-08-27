@@ -80,3 +80,6 @@ jobs:
 
       - name: Audit runtime dependencies
         run: python -m pip_audit -r requirements.txt --progress-spinner off
+
+      - name: Audit development dependencies
+        run: python -m pip_audit -r requirements-dev.txt --progress-spinner off
