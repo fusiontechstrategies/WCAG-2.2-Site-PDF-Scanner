@@ -34,7 +34,7 @@ import warnings
 from contextlib import asynccontextmanager
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
@@ -2452,8 +2452,9 @@ class DynamicAnalyzer(BaseAnalyzer):
         """Criterion 2.1.1 (Level A): Checks that all interactive elements are keyboard operable."""
         focusable_elements_query = 'a[href]:not([tabindex="-1"]), button:not([tabindex="-1"]), input:not([type="hidden"]):not([tabindex="-1"]), textarea:not([tabindex="-1"]), select:not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])'
 
-        all_focusable_elements_outerhtml = await self.page.evaluate(
-            f'Array.from(document.querySelectorAll("{focusable_elements_query}")).map(el => el.outerHTML)'
+        all_focusable_elements_outerhtml = await self.page.eval_on_selector_all(
+            focusable_elements_query,
+            "elements => elements.map(element => element.outerHTML)",
         )
 
         unique_elements_html_set = set(all_focusable_elements_outerhtml)
@@ -3564,6 +3565,18 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
+def _decode_crawled_html(raw_body: bytes) -> str:
+    """Decode crawler HTML with charset-normalizer, then fall back to UTF-8."""
+    if _cn_from_bytes is not None:
+        try:
+            best_match = _cn_from_bytes(raw_body).best()
+            if best_match is not None:
+                return str(best_match)
+        except Exception as exc:
+            logger.debug("HTML encoding detection failed: %s", exc)
+    return raw_body.decode("utf-8", errors="ignore")
+
+
 class Crawler:
     """Asynchronously crawls a website to discover pages and assets."""
 
@@ -3780,18 +3793,7 @@ class Crawler:
                                     logger.warning("Skipping oversized HTML response: %s", final_url)
                                     continue
                                 raw_body = await _read_capped_bytes(response, MAX_RESPONSE_BYTES)
-                                # Determine encoding using charset-normalizer if available
-                                if _cn_from_bytes is not None:
-                                    try:
-                                        _best = _cn_from_bytes(raw_body).best()
-                                        _quality = (getattr(_best, "quality", 0) or 0) / 100.0 if _best else 0.0
-                                        encoding = _best.encoding if (_best and _quality >= 0.5) else "utf-8"
-                                    except Exception:
-                                        encoding = "utf-8"
-                                else:
-                                    encoding = "utf-8"
-
-                                html = raw_body.decode(encoding, errors='ignore')
+                                html = _decode_crawled_html(raw_body)
                                 await self._process_html(html, final_url, depth)
 
                     except (aiohttp.ClientError, asyncio.TimeoutError) as e:
@@ -5169,7 +5171,14 @@ class ReportGenerator:
     def generate_json(self):
         """Generate JSON report."""
         path = self.output_dir / "report.json"
-        report_dict = asdict(self.report)
+        # Python 3.10's dataclasses.asdict cannot reconstruct defaultdict
+        # subclasses. Preserve the report while serializing plain mappings.
+        serializable_report = replace(
+            self.report,
+            broken_links=dict(self.report.broken_links),
+            fixes_applied=dict(self.report.fixes_applied),
+        )
+        report_dict = asdict(serializable_report)
 
         # Convert enums to strings for JSON serialization
         for issue in report_dict.get("issues", []):

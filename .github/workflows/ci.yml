@@ -51,8 +51,85 @@ jobs:
       - name: Run offline diagnostics
         run: python WCAG_Site_PDF_Scanner.py diagnostics
 
+      - name: Run core regression tests
+        run: python -m unittest -v tests.test_core_regressions
+
       - name: Lint
-        run: python -m ruff check WCAG_Site_PDF_Scanner.py
+        run: python -m ruff check WCAG_Site_PDF_Scanner.py tests
+
+      - name: Run static security analysis
+        run: python -m bandit -q -c pyproject.toml -r WCAG_Site_PDF_Scanner.py
+
+  browser-regression:
+    name: Browser keyboard regression
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install runtime and validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade pip
+          python -m pip install --disable-pip-version-check -r requirements-dev.txt
+
+      - name: Install headless Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Run keyboard navigation regression
+        run: python -m unittest -v tests.test_keyboard_playwright
+
+  platform-regression:
+    name: Platform ${{ matrix.os }} Python 3.12
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install runtime and validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade pip
+          python -m pip install --disable-pip-version-check -r requirements-dev.txt
+
+      - name: Verify dependency installation
+        run: python -m pip check
+
+      - name: Compile source
+        run: python -m py_compile WCAG_Site_PDF_Scanner.py
+
+      - name: Run offline diagnostics
+        run: python WCAG_Site_PDF_Scanner.py diagnostics
+
+      - name: Run core regression tests
+        run: python -m unittest -v tests.test_core_regressions
+
+      - name: Lint
+        run: python -m ruff check WCAG_Site_PDF_Scanner.py tests
 
       - name: Run static security analysis
         run: python -m bandit -q -c pyproject.toml -r WCAG_Site_PDF_Scanner.py
