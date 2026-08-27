@@ -1,0 +1,80 @@
+name: Bug report
+description: Report a reproducible scanner, report, packaging, or documentation defect.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve the scanner. Use synthetic or public-safe evidence only. Reports can contain page text, markup, URLs, file paths, and screenshots.
+
+        Do not disclose credentials, private targets, customer content, or an unpatched vulnerability here. Follow SECURITY.md for security reports.
+
+  - type: input
+    id: version
+    attributes:
+      label: Scanner version
+      description: Run `python WCAG_Site_PDF_Scanner.py --version` or `wcag-site-pdf-scanner --version`.
+      placeholder: x.y.z
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation method
+      options:
+        - Source file and requirements.txt
+        - Local pip install
+        - Local pipx install
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Python version, and whether Playwright Chromium is installed.
+      placeholder: Windows 11, Python 3.12.10, Chromium installed
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Minimal command or workflow
+      description: Redact private paths and replace private targets with a synthetic equivalent.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: Include the smallest useful error excerpt. Do not attach a sensitive generated report.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Synthetic reproduction
+      description: Provide minimal HTML, CSS, PDF-generation steps, or mocked network behavior when possible.
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed credentials, private targets, customer content, and other sensitive data.
+          required: true
+        - label: I scanned only content I own or am authorized to test.
+          required: true

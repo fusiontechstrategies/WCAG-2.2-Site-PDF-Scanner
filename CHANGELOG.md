@@ -8,16 +8,26 @@
 - Added pull-request dependency review with moderate-or-higher vulnerability blocking and explicit license checks
 - Added a Dependabot-managed development requirements file with the TOML parser required by Bandit on Python 3.10
 - Added core crawler and report regressions across supported Python versions, Python 3.12 Windows and macOS gates, and a real headless-browser keyboard-navigation regression
+- Added standards-based Python package metadata, a console entry point, distribution inspection, and isolated wheel and source-distribution validation without enabling publication
+- Added a deterministic synthetic site, production-generated HTML and JSON report fixtures, and a fixed-size report preview
+- Added a local five-minute walkthrough, workflow selection guide, packaging release checklist, issue forms, and a pull-request template
+- Added CodeQL security-extended analysis and full-history Gitleaks workflow coverage
+- Added regression checks that keep package and runtime versions aligned, regenerate sample reports, validate the preview dimensions, and reject Unicode em dashes in public Markdown
 
 ### Changed
 
 - Extended Dependabot coverage to GitHub Actions, separated runtime and development update groups, and kept major Python and GitHub Actions upgrades separate from grouped minor and patch updates
+- Marked the current development source as `5.0.1.dev0` so test builds cannot be confused with the final `5.0.0` source release
+- Made installed console help use the actual command name while preserving the source-file command name
 
 ### Corrected
 
 - Corrected crawler decoding so charset-normalizer results are retained for UTF-16 and Windows-1252 HTML
 - Corrected web JSON report generation on Python 3.10 when report mappings use defaultdict internally
 - Corrected the dynamic keyboard-navigation selector evaluation so the check runs instead of being skipped after a JavaScript syntax error
+- Corrected relative local HTML file and directory handling so file-URI conversion no longer fails before analysis
+- Corrected text-report generation to use deterministic LF newlines on every supported platform
+- Made generated web-report findings keyboard-operable and added semantic headings, a main landmark, named filters, live result counts, and synchronized expansion state
 
 ## 5.0.0 - 2026-08-13
 

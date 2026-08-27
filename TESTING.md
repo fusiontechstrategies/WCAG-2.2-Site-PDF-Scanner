@@ -1,6 +1,40 @@
 # Testing
 
-The 5.0.0 release was validated on August 13, 2026. Tests used only synthetic local fixtures and public dependency metadata. No live scan output is stored in this repository.
+Tests use only synthetic local fixtures and public dependency metadata. No live scan output is stored in this repository.
+
+## Current development validation
+
+The `5.0.1.dev0` development tree was validated on August 27, 2026. This is development evidence, not a release announcement.
+
+### Supported Python versions
+
+- The pinned runtime dependencies and resolved development dependencies were installed separately on Python 3.10.21, 3.12.10, and 3.14.7 on Windows.
+- All 14 embedded offline diagnostics passed on each interpreter, for 42 successful diagnostic checks.
+- All 12 core and adoption regression tests passed on each interpreter, for 36 successful test runs.
+- All four browser report tests passed on each interpreter, for 12 successful Playwright test runs.
+- Ruff, Bandit, bytecode compilation, and dependency consistency checks passed on each interpreter.
+
+### Reports and installation paths
+
+- The documented five-minute walkthrough completed against the synthetic local page and generated HTML and JSON reports.
+- The committed sample HTML and JSON reports reproduced byte for byte from the deterministic fixture builder.
+- Browser tests verified named filters, landmarks, live result counts, keyboard operation, synchronized expanded state, and no horizontal page overflow at 1440, 768, and 360 pixels.
+- A wheel and source distribution were built from the current development tree into a fresh output directory, passed Twine checks, and passed the repository distribution inspector.
+- The wheel and source distribution were installed into separate isolated environments. Both reported the expected version, loaded the runtime module from `site-packages`, passed all 14 embedded diagnostics, and had no broken requirements.
+- A local pipx installation reported the expected version and passed all 14 embedded diagnostics.
+- The installed wheel scanned a synthetic PDF through the isolated worker process and produced HTML, JSON, and CSV reports without an analysis error.
+
+### Security and repository checks
+
+- pip-audit reported no known vulnerabilities in either requirements file at test time.
+- Gitleaks reported no findings in the complete commit history or the proposed tracked project files.
+- markdownlint, actionlint, YAML parsing, and relative Markdown link checks passed. External HTTP(S) destinations were not part of the relative-link check.
+- The package inspector confirmed safe archive paths, expected metadata and entry points, exact dependency metadata, and source bytes matching the repository.
+- The CodeQL and Gitleaks workflows passed local syntax and action pinning review. Their hosted scans must still pass on GitHub before merge.
+
+## 5.0.0 release validation
+
+The 5.0.0 release was validated on August 13, 2026.
 
 ## Runtime compatibility
 

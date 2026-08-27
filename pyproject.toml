@@ -1,3 +1,57 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wcag-site-pdf-scanner"
+version = "5.0.1.dev0"
+description = "Evidence-first WCAG 2.2 scanning for websites, local HTML, and PDF documents"
+readme = "README.md"
+requires-python = ">=3.10,<3.15"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+  { name = "FusionTech Strategies" },
+]
+keywords = [
+  "accessibility",
+  "axe-core",
+  "pdf-accessibility",
+  "section-508",
+  "wcag",
+  "wcag22",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dynamic = ["dependencies"]
+
+[project.scripts]
+wcag-site-pdf-scanner = "WCAG_Site_PDF_Scanner:main"
+
+[project.urls]
+Changelog = "https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner#readme"
+Issues = "https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/issues"
+Repository = "https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner"
+
+[tool.setuptools]
+py-modules = ["WCAG_Site_PDF_Scanner"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
 [tool.ruff]
 target-version = "py310"
 line-length = 120

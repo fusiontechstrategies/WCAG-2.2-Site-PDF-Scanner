@@ -1,0 +1,44 @@
+name: Feature request
+description: Propose a bounded capability or evidence improvement.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Proposals should preserve conservative accessibility claims, safe defaults, deterministic reports, and the one-file runtime design.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the operator or evaluator need without prescribing an implementation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Desired evidence or outcome
+      description: Explain what an operator should be able to observe, export, or decide.
+    validations:
+      required: true
+
+  - type: textarea
+    id: standard
+    attributes:
+      label: Relevant standard or authoritative guidance
+      description: Link WCAG, ACT, PDF/UA, Section 508, or other primary guidance when applicable.
+
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Safety and interpretation boundaries
+      description: Identify network, parser, privacy, automation, or conformance-claim risks.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Note existing commands, reports, or manual methods that partly address the need.
