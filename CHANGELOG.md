@@ -26,6 +26,7 @@
 - Corrected web JSON report generation on Python 3.10 when report mappings use defaultdict internally
 - Corrected the dynamic keyboard-navigation selector evaluation so the check runs instead of being skipped after a JavaScript syntax error
 - Corrected relative local HTML file and directory handling so file-URI conversion no longer fails before analysis
+- Corrected text-report generation to use deterministic LF newlines on every supported platform
 - Made generated web-report findings keyboard-operable and added semantic headings, a main landmark, named filters, live result counts, and synchronized expansion state
 
 ## 5.0.0 - 2026-08-13

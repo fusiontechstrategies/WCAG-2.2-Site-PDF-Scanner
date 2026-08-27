@@ -5210,7 +5210,7 @@ class ReportGenerator:
             report_dict['screenshot_dir'] = str(report_dict['screenshot_dir']) if not isinstance(report_dict['screenshot_dir'], str) else report_dict['screenshot_dir']
 
         try:
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, 'w', encoding='utf-8', newline='\n') as f:
                 json.dump(report_dict, f, indent=2)
             console.print(f"✓ JSON report saved to [cyan]{path}[/cyan]")
         except Exception as e:
@@ -5253,7 +5253,7 @@ class ReportGenerator:
         """Generate Markdown report."""
         path = self.output_dir / "report.md"
         try:
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, 'w', encoding='utf-8', newline='\n') as f:
                 f.write(f"# Accessibility Audit Report for {_md_cell(self.report.target)}\n\n")
                 f.write(f"**Timestamp:** {_md_cell(self.report.timestamp)}\n")
                 f.write(f"**WCAG Level Tested:** {self.report.wcag_level_tested.value}\n\n")
@@ -5992,7 +5992,7 @@ openFromHash();
         html_template = re.sub(r'(?m)^[ \t]+$', '', html_template)
 
         try:
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, 'w', encoding='utf-8', newline='\n') as f:
                 f.write(html_template)
             console.print(f"✓ Interactive HTML report saved to [cyan]{path}[/cyan]")
         except Exception as e:
@@ -6225,7 +6225,7 @@ openFromHash();
         xml_output.append('</testsuites>')
 
         try:
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, 'w', encoding='utf-8', newline='\n') as f:
                 f.write('\n'.join(xml_output))
             console.print(f"✓ JUnit XML report saved to [cyan]{path}[/cyan]")
         except Exception as e:
@@ -7795,7 +7795,8 @@ def _write_pdf_reports(reports: List[Dict[str, Any]], output_dir: Path, formats:
 
     if 'json' in requested:
         path = output_dir / 'pdf-report.json'
-        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding='utf-8')
+        with path.open('w', encoding='utf-8', newline='\n') as handle:
+            handle.write(json.dumps(payload, indent=2, ensure_ascii=False))
         written.append(path)
 
     if 'csv' in requested:
@@ -7888,7 +7889,8 @@ details{{margin-top:.5rem}}
 <p>{payload['documents']} document(s); {payload['documents_with_analysis_errors']} with analysis errors.</p>
 {"".join(document_sections)}
 </body></html>'''
-        path.write_text(html_text, encoding='utf-8')
+        with path.open('w', encoding='utf-8', newline='\n') as handle:
+            handle.write(html_text)
         written.append(path)
 
     return written
@@ -8290,7 +8292,8 @@ def discover_pdfs_command(
     ))
     output_path = Path(output).resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(''.join(f"{url}\n" for url in urls), encoding='utf-8')
+    with output_path.open('w', encoding='utf-8', newline='\n') as handle:
+        handle.write(''.join(f"{url}\n" for url in urls))
     console.print(f"Discovered [bold]{len(urls)}[/bold] PDF URL(s). List saved to [cyan]{output_path}[/cyan].")
     if scan_after and urls:
         _execute_pdf_scan(

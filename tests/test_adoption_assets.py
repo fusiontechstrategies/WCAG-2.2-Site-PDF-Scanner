@@ -71,8 +71,15 @@ class SampleReportTests(unittest.TestCase):
         committed_dir = REPOSITORY_ROOT / "examples" / "sample-report"
         with tempfile.TemporaryDirectory(prefix="wcag-sample-report-") as temp_dir:
             generated_html, generated_json = build_sample_report(Path(temp_dir))
-            self.assertEqual(generated_html.read_bytes(), (committed_dir / "report.html").read_bytes())
-            self.assertEqual(generated_json.read_bytes(), (committed_dir / "report.json").read_bytes())
+            for generated_report, committed_name in (
+                (generated_html, "report.html"),
+                (generated_json, "report.json"),
+            ):
+                report_bytes = generated_report.read_bytes()
+                self.assertNotIn(b"\r\n", report_bytes)
+                self.assertNotIn(b"\r", report_bytes)
+                committed_bytes = (committed_dir / committed_name).read_bytes().replace(b"\r\n", b"\n")
+                self.assertEqual(report_bytes, committed_bytes)
 
     def test_preview_has_documented_viewport(self):
         preview = REPOSITORY_ROOT / "examples" / "sample-report" / "report-preview.png"
