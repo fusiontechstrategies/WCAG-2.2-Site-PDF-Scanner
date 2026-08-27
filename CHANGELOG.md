@@ -7,10 +7,17 @@
 - Added continuous integration across Python 3.10, 3.12, and 3.14 with offline diagnostics, linting, static security analysis, and dependency auditing
 - Added pull-request dependency review with moderate-or-higher vulnerability blocking and explicit license checks
 - Added a Dependabot-managed development requirements file with the TOML parser required by Bandit on Python 3.10
+- Added core crawler and report regressions across supported Python versions, Python 3.12 Windows and macOS gates, and a real headless-browser keyboard-navigation regression
 
 ### Changed
 
 - Extended Dependabot coverage to GitHub Actions, separated runtime and development update groups, and kept major Python and GitHub Actions upgrades separate from grouped minor and patch updates
+
+### Corrected
+
+- Corrected crawler decoding so charset-normalizer results are retained for UTF-16 and Windows-1252 HTML
+- Corrected web JSON report generation on Python 3.10 when report mappings use defaultdict internally
+- Corrected the dynamic keyboard-navigation selector evaluation so the check runs instead of being skipped after a JavaScript syntax error
 
 ## 5.0.0 - 2026-08-13
 

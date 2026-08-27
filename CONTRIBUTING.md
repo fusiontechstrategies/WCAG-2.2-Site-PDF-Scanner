@@ -15,7 +15,9 @@ Contributions should preserve the project's core design: one Python runtime file
 ```powershell
 python -m py_compile WCAG_Site_PDF_Scanner.py
 python WCAG_Site_PDF_Scanner.py diagnostics
-ruff check WCAG_Site_PDF_Scanner.py
+python -m unittest -v tests.test_core_regressions
+python -m unittest -v tests.test_keyboard_playwright
+ruff check WCAG_Site_PDF_Scanner.py tests
 bandit -q -c pyproject.toml -r WCAG_Site_PDF_Scanner.py
 python -m pip_audit -r requirements.txt
 ```
