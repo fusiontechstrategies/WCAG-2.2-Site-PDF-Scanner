@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added continuous integration across Python 3.10, 3.12, and 3.14 with offline diagnostics, linting, static security analysis, and dependency auditing
+- Added pull-request dependency review with moderate-or-higher vulnerability blocking and explicit license checks
+
+### Changed
+
+- Extended Dependabot coverage to GitHub Actions and kept major Python upgrades separate from grouped minor and patch updates
+
 ## 5.0.0 - 2026-08-13
 
 ### Added
