@@ -5,15 +5,15 @@
 
 aiohttp==3.14.3
 beautifulsoup4==4.15.0
-charset-normalizer==3.5.0
+charset-normalizer==3.5.1
 click==8.4.2
 cssutils==2.15.0
 defusedxml==0.7.1
 fpdf2==2.8.8
-lxml==6.1.1
+lxml==6.1.2
 nltk==3.10.3
 Pillow==12.3.0
-pikepdf==10.11.0
+pikepdf==10.12.0
 playwright==1.62.0
 pyspellchecker==0.9.0
 questionary==2.1.1
