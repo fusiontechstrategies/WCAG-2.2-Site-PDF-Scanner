@@ -1,5 +1,5 @@
 include .markdownlint-cli2.yaml
-include .github/release-notes/v5.0.1.md
+recursive-include .github/release-notes *.md
 include .github/workflows/release.yml
 include CHANGELOG.md
 include CONTRIBUTING.md
