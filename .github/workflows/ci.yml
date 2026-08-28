@@ -57,6 +57,7 @@ jobs:
           tests.test_core_regressions
           tests.test_adoption_assets
           tests.test_normalize_sdist
+          tests.test_normalize_wheel
           tests.test_release_assets
 
       - name: Lint
@@ -136,6 +137,7 @@ jobs:
           tests.test_core_regressions
           tests.test_adoption_assets
           tests.test_normalize_sdist
+          tests.test_normalize_wheel
           tests.test_release_assets
 
       - name: Lint
@@ -210,6 +212,9 @@ jobs:
           SOURCE_DATE_EPOCH: ${{ steps.build-epoch.outputs.value }}
         run: |
           python -m build --no-isolation --wheel --sdist --outdir dist
+          python scripts/normalize_wheel.py \
+            --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
+            dist/*.whl
           python scripts/normalize_sdist.py \
             --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
             dist/*.tar.gz
@@ -230,6 +235,9 @@ jobs:
         run: |
           set -euo pipefail
           python -m build --no-isolation --wheel --sdist --outdir reproducibility-dist
+          python scripts/normalize_wheel.py \
+            --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
+            reproducibility-dist/*.whl
           python scripts/normalize_sdist.py \
             --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
             reproducibility-dist/*.tar.gz

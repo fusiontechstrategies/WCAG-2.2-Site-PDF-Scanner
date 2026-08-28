@@ -15,7 +15,7 @@ Contributions should preserve the project's core design: one Python runtime file
 ```powershell
 python -m py_compile WCAG_Site_PDF_Scanner.py
 python WCAG_Site_PDF_Scanner.py diagnostics
-python -m unittest -v tests.test_core_regressions tests.test_adoption_assets tests.test_normalize_sdist tests.test_release_assets
+python -m unittest -v tests.test_core_regressions tests.test_adoption_assets tests.test_normalize_sdist tests.test_normalize_wheel tests.test_release_assets
 python -m unittest -v tests.test_keyboard_playwright
 ruff check WCAG_Site_PDF_Scanner.py examples scripts tests
 bandit -q -c pyproject.toml -r WCAG_Site_PDF_Scanner.py scripts
@@ -26,7 +26,7 @@ python -m pip_audit -r requirements-build.txt
 
 Changes to crawling, downloads, redirects, browser routing, parsers, or report rendering require focused security tests.
 
-Changes to package metadata, release controls, or included files also require two normalized package builds with identical bytes, `python -m twine check`, both distribution inspectors, exact six-asset comparison, and isolated wheel and source-distribution installs. Follow [RELEASING.md](RELEASING.md); never reuse a published version for different bytes.
+Changes to package metadata, release controls, or included files also require two wheel and source-distribution normalizations with identical bytes, `python -m twine check`, both distribution inspectors, exact six-asset comparison, and isolated wheel and source-distribution installs. Follow [RELEASING.md](RELEASING.md); never reuse a published version for different bytes.
 
 ## Accessibility result rules
 

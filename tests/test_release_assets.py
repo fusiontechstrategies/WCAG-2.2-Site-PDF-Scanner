@@ -10,6 +10,7 @@ import unittest
 from pathlib import Path
 
 from scripts import normalize_sdist
+from scripts import normalize_wheel
 from scripts import prepare_release
 
 
@@ -42,7 +43,9 @@ class ReleasePreparationTests(unittest.TestCase):
             capture_output=True,
             text=True,
         )
+        wheel = next(output.glob("*.whl"))
         sdist = next(output.glob("*.tar.gz"))
+        normalize_wheel.normalize_wheel(wheel, SOURCE_DATE_EPOCH)
         normalize_sdist.normalize_sdist(sdist, SOURCE_DATE_EPOCH)
 
     def prepare(self, parent: Path, name: str, dist: Path) -> tuple[Path, ...]:

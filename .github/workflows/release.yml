@@ -79,6 +79,9 @@ jobs:
         run: |
           set -euo pipefail
           python -m build --no-isolation --wheel --sdist --outdir package-dist
+          python scripts/normalize_wheel.py \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            package-dist/*.whl
           python scripts/normalize_sdist.py \
             --source-date-epoch "$SOURCE_DATE_EPOCH" \
             package-dist/*.tar.gz
@@ -102,6 +105,9 @@ jobs:
         run: |
           set -euo pipefail
           python -m build --no-isolation --wheel --sdist --outdir repeat-package-dist
+          python scripts/normalize_wheel.py \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            repeat-package-dist/*.whl
           python scripts/normalize_sdist.py \
             --source-date-epoch "$SOURCE_DATE_EPOCH" \
             repeat-package-dist/*.tar.gz

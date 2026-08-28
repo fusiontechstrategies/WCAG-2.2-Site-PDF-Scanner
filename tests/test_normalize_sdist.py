@@ -102,6 +102,31 @@ class NormalizeSdistTests(unittest.TestCase):
                 normalizer.normalize_sdist(drive, 50)
             self.assertEqual(original_drive, drive.read_bytes())
 
+    def test_generated_metadata_line_endings_are_normalized(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archives = []
+            for filename, newline in (("windows.tar.gz", b"\r\n"), ("posix.tar.gz", b"\n")):
+                path = root / filename
+                with tarfile.open(path, mode="w:gz") as archive:
+                    for name in ("package-1.0/PKG-INFO", "package-1.0/setup.cfg"):
+                        value = newline.join((b"Synthetic: value", b"Second: value", b""))
+                        member = tarfile.TarInfo(name)
+                        member.size = len(value)
+                        archive.addfile(member, io.BytesIO(value))
+                    source = b"VALUE = 1\n"
+                    member = tarfile.TarInfo("package-1.0/source.py")
+                    member.size = len(source)
+                    archive.addfile(member, io.BytesIO(source))
+                normalizer.normalize_sdist(path, 50)
+                archives.append(path)
+            self.assertEqual(archives[0].read_bytes(), archives[1].read_bytes())
+            with tarfile.open(archives[0], mode="r:gz") as archive:
+                metadata = archive.extractfile("package-1.0/PKG-INFO")
+                self.assertIsNotNone(metadata)
+                value = metadata.read()
+            self.assertNotIn(b"\r", value)
+
 
 if __name__ == "__main__":
     unittest.main()

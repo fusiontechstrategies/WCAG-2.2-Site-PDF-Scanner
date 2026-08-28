@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 import argparse
-import gzip
+import binascii
 import hashlib
 import os
 import re
+import struct
 import tarfile
 import tempfile
 import unicodedata
@@ -85,6 +86,34 @@ def member_identity(
     ]
 
 
+def normalize_generated_text(name: str, value: bytes) -> bytes:
+    if not (name.endswith("/PKG-INFO") or name.endswith("/setup.cfg")):
+        return value
+    try:
+        text = value.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise SdistNormalizationError(f"Generated source metadata is not UTF-8: {name!r}") from error
+    require("\x00" not in text, f"Generated source metadata contains a NUL: {name!r}")
+    return text.replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
+
+
+def build_stored_gzip(value: bytes, source_date_epoch: int) -> bytes:
+    """Build gzip bytes with fixed-size stored DEFLATE blocks and no zlib variance."""
+    output = bytearray(b"\x1f\x8b\x08\x00")
+    output.extend(struct.pack("<I", source_date_epoch))
+    output.extend(b"\x00\xff")
+    for offset in range(0, len(value), 0xFFFF):
+        block = value[offset : offset + 0xFFFF]
+        final = offset + len(block) == len(value)
+        output.append(1 if final else 0)
+        output.extend(struct.pack("<HH", len(block), len(block) ^ 0xFFFF))
+        output.extend(block)
+    if not value:
+        output.extend(b"\x01\x00\x00\xff\xff")
+    output.extend(struct.pack("<II", binascii.crc32(value) & 0xFFFFFFFF, len(value) & 0xFFFFFFFF))
+    return bytes(output)
+
+
 def normalize_sdist(path: Path, source_date_epoch: int) -> str:
     require(not path.is_symlink(), "Source distribution must not be a symbolic link")
     path = path.resolve(strict=True)
@@ -96,28 +125,18 @@ def normalize_sdist(path: Path, source_date_epoch: int) -> str:
         "SOURCE_DATE_EPOCH exceeds the gzip timestamp range",
     )
     members = read_members(path)
-    original_identity = member_identity(members)
+    normalized_inputs = [
+        (member, None if value is None else normalize_generated_text(member.name, value)) for member, value in members
+    ]
+    expected_identity = sorted(member_identity(normalized_inputs))
 
     descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
     os.close(descriptor)
     temporary_path = Path(temporary_name)
     try:
-        with (
-            temporary_path.open("wb") as raw_output,
-            gzip.GzipFile(
-                filename="",
-                mode="wb",
-                compresslevel=9,
-                fileobj=raw_output,
-                mtime=source_date_epoch,
-            ) as gzip_output,
-            tarfile.open(
-                fileobj=gzip_output,
-                mode="w|",
-                format=tarfile.PAX_FORMAT,
-            ) as output,
-        ):
-            for original, value in sorted(members, key=lambda item: item[0].name):
+        raw_tar = BytesIO()
+        with tarfile.open(fileobj=raw_tar, mode="w", format=tarfile.PAX_FORMAT) as output:
+            for original, value in sorted(normalized_inputs, key=lambda item: item[0].name):
                 normalized = tarfile.TarInfo(original.name.rstrip("/"))
                 normalized.mtime = source_date_epoch
                 normalized.uid = 0
@@ -136,9 +155,10 @@ def normalize_sdist(path: Path, source_date_epoch: int) -> str:
                     normalized.mode = 0o755 if original.mode & 0o111 else 0o644
                     normalized.size = len(value)
                     output.addfile(normalized, BytesIO(value))
+        temporary_path.write_bytes(build_stored_gzip(raw_tar.getvalue(), source_date_epoch))
         normalized_members = read_members(temporary_path)
         require(
-            member_identity(normalized_members) == sorted(original_identity),
+            member_identity(normalized_members) == expected_identity,
             "Normalized archive changed names or file contents",
         )
         temporary_path.replace(path)
