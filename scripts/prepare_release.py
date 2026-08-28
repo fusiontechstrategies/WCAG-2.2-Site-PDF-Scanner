@@ -176,7 +176,13 @@ def wheel_inventory(path: Path, source_date_epoch: int) -> tuple[list[dict[str, 
     expected_timestamp[5] -= expected_timestamp[5] % 2
     expected_zip_timestamp = tuple(expected_timestamp)
     with zipfile.ZipFile(path) as archive:
-        for member in archive.infolist():
+        require(archive.comment == b"", "Wheel has a noncanonical archive comment")
+        members = archive.infolist()
+        require(
+            [member.filename for member in members] == sorted(member.filename for member in members),
+            "Wheel members are not sorted canonically",
+        )
+        for member in members:
             name = record_portable_name(member.filename, names, portable_names)
             require(
                 member.date_time == expected_zip_timestamp,
@@ -184,9 +190,15 @@ def wheel_inventory(path: Path, source_date_epoch: int) -> tuple[list[dict[str, 
             )
             require(member.flag_bits & 1 == 0, f"Wheel contains an encrypted member: {name!r}")
             require(not stat.S_ISLNK(member.external_attr >> 16), f"Wheel contains a symbolic link: {name!r}")
-            if member.is_dir():
-                records.append({"name": name, "type": "directory"})
-                continue
+            require(not member.is_dir(), f"Wheel contains an explicit directory: {name!r}")
+            require(member.compress_type == zipfile.ZIP_STORED, f"Wheel member is not stored canonically: {name!r}")
+            require(member.create_system == 3, f"Wheel member has a noncanonical creator system: {name!r}")
+            require(member.extra == b"" and member.comment == b"", f"Wheel member has extra metadata: {name!r}")
+            mode = member.external_attr >> 16
+            require(
+                stat.S_ISREG(mode) and stat.S_IMODE(mode) == 0o644,
+                f"Wheel member has a noncanonical mode: {name!r}",
+            )
             value = archive.read(member)
             require(len(value) == member.file_size, f"Wheel member is truncated: {name!r}")
             values[name] = value
@@ -228,7 +240,10 @@ def sdist_inventory(path: Path, version: str, source_date_epoch: int) -> list[di
     expected_root = f"{ARCHIVE_NAME}-{version}"
     with path.open("rb") as raw_archive:
         gzip_header = raw_archive.read(10)
-    require(len(gzip_header) == 10 and gzip_header[:3] == b"\x1f\x8b\x08", "Invalid gzip header")
+    require(
+        len(gzip_header) == 10 and gzip_header[:4] == b"\x1f\x8b\x08\x00" and gzip_header[8:] == b"\x00\xff",
+        "Source-distribution gzip header is not canonical",
+    )
     require(
         struct.unpack("<I", gzip_header[4:8])[0] == source_date_epoch,
         "Source-distribution gzip timestamp does not match SOURCE_DATE_EPOCH",

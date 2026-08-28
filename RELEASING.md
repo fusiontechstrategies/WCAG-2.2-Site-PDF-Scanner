@@ -15,7 +15,7 @@ For version `X.Y.Z`, a GitHub release contains only:
 5. `SHA256SUMS.txt`
 6. `release-evidence.json`
 
-The standalone asset and packaged module are byte-identical to `WCAG_Site_PDF_Scanner.py` in the tagged commit. The normalized source distribution has deterministic gzip and member metadata. The SPDX 2.3 document records the exact pinned runtime dependency set. SHA-256 covers the runtime, wheel, source distribution, and SBOM. Machine-readable evidence binds those assets, dependency identities, and archive membership to the exact source commit.
+The standalone asset and packaged module are byte-identical to `WCAG_Site_PDF_Scanner.py` in the tagged commit. The pure-Python wheel and source distribution have canonical generated metadata, archive fields, ordering, timestamps, ownership, permissions, and line endings. The SPDX 2.3 document records the exact pinned runtime dependency set. SHA-256 covers the runtime, wheel, source distribution, and SBOM. Machine-readable evidence binds those assets, dependency identities, and archive membership to the exact source commit.
 
 Every release asset receives GitHub build-provenance attestation. Existing release assets are never replaced.
 
@@ -26,7 +26,7 @@ Every release asset receives GitHub build-provenance attestation. Existing relea
 3. Run the complete supported Python, Windows, macOS, Playwright Chromium, package, dependency, CodeQL, Semgrep, Trivy, Gitleaks, and repository-policy gates.
 4. Set `SOURCE_DATE_EPOCH` to the candidate commit time.
 5. Install the exact tools in `requirements-build.txt` and build with `--no-isolation`.
-6. Normalize the source distribution with `scripts/normalize_sdist.py`.
+6. Normalize the wheel and source distribution with `scripts/normalize_wheel.py` and `scripts/normalize_sdist.py`.
 7. Run Twine, `scripts/verify_distribution.py`, and `scripts/prepare_release.py`.
 8. Repeat the complete package and release build into new empty directories and require the same six filenames and bytes.
 9. Install the wheel and source distribution separately, test the pipx path, run `--version`, and pass all 14 offline diagnostics.
@@ -45,6 +45,9 @@ $env:SOURCE_DATE_EPOCH = $candidateEpoch
 
 python -m pip install -r requirements-build.txt
 python -m build --no-isolation --wheel --sdist --outdir package-dist
+python scripts\normalize_wheel.py `
+  --source-date-epoch $candidateEpoch `
+  package-dist\wcag_site_pdf_scanner-5.0.1-py3-none-any.whl
 python scripts\normalize_sdist.py `
   --source-date-epoch $candidateEpoch `
   package-dist\wcag_site_pdf_scanner-5.0.1.tar.gz

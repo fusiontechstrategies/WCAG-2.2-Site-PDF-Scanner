@@ -31,6 +31,7 @@
 - Corrected the dynamic keyboard-navigation selector evaluation so the check runs instead of being skipped after a JavaScript syntax error
 - Corrected relative local HTML file and directory handling so file-URI conversion no longer fails before analysis
 - Corrected text-report generation to use deterministic LF newlines on every supported platform
+- Canonicalized generated package metadata and wheel container fields so pure-Python release archives are byte-identical across supported build platforms
 - Made generated web-report findings keyboard-operable and added semantic headings, a main landmark, named filters, live result counts, and synchronized expansion state
 
 ## 5.0.0 - 2026-08-13

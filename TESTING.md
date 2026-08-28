@@ -9,7 +9,7 @@ The 5.0.1 candidate tree was validated on August 28, 2026. This is release-readi
 ### Supported Python versions
 
 - The protected workflow covers Python 3.10, 3.12, and 3.14 on Linux plus Python 3.12 on Windows and macOS.
-- All 19 core, adoption, source-distribution, and release-asset tests pass on Windows Python 3.10.21, 3.12.10, and 3.14.7. Hosted runs must pass the same suite before merge.
+- All 23 core, adoption, distribution-normalization, and release-asset tests pass on Windows Python 3.10.21, 3.12.10, and 3.14.7. Hosted runs must pass the same suite before merge.
 - All four Playwright Chromium regressions pass on each of those three Windows Python versions and remain a separate required hosted gate.
 - All 14 embedded offline diagnostics pass from source on each supported Python boundary and from the wheel, source distribution, and pipx installation on Python 3.12.10.
 - Ruff, Bandit, bytecode compilation, dependency consistency, and repository punctuation checks pass on the candidate source.
@@ -19,7 +19,8 @@ The 5.0.1 candidate tree was validated on August 28, 2026. This is release-readi
 - The documented five-minute walkthrough completed against the synthetic local page and generated HTML and JSON reports.
 - The committed sample HTML and JSON reports reproduced byte for byte from the deterministic fixture builder.
 - Browser tests verified named filters, landmarks, live result counts, keyboard operation, synchronized expanded state, and no horizontal page overflow at 1440, 768, and 360 pixels.
-- A wheel and normalized source distribution were built twice from the candidate tree into separate fresh directories. Both complete six-asset builds had identical filenames and bytes.
+- A normalized wheel and source distribution were built twice from the candidate tree into separate fresh directories. Both complete six-asset builds had identical filenames and bytes.
+- Synthetic Windows-style and POSIX-style generated package metadata normalize to the same archive bytes. The exact Linux-hosted candidate must also match the independently built Windows candidate before release approval.
 - Twine and both repository distribution inspectors validated package metadata, archive safety, exact runtime bytes, dependency metadata, and wheel RECORD coverage.
 - The wheel and source distribution were installed into separate isolated environments. Both reported 5.0.1, loaded runtime bytes matching the standalone and repository source, passed all 14 embedded diagnostics, and had no broken requirements.
 - A local pipx installation reported the expected version and passed all 14 embedded diagnostics.

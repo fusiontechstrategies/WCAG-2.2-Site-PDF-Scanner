@@ -102,9 +102,11 @@ def _verify_sdist(sdist_path: Path, repository_root: Path) -> None:
             "examples/sample-report/report.html",
             "examples/sample-report/report.json",
             "scripts/normalize_sdist.py",
+            "scripts/normalize_wheel.py",
             "scripts/prepare_release.py",
             "scripts/verify_distribution.py",
             "tests/test_normalize_sdist.py",
+            "tests/test_normalize_wheel.py",
             "tests/test_release_assets.py",
         }
         missing = sorted(required - relative_names)
@@ -118,9 +120,11 @@ def _verify_sdist(sdist_path: Path, repository_root: Path) -> None:
             "examples/sample-report/report.html",
             "examples/sample-report/report.json",
             "scripts/normalize_sdist.py",
+            "scripts/normalize_wheel.py",
             "scripts/prepare_release.py",
             "scripts/verify_distribution.py",
             "tests/test_normalize_sdist.py",
+            "tests/test_normalize_wheel.py",
             "tests/test_release_assets.py",
         ):
             archived_name = next(name for name in names if "/".join(PurePosixPath(name).parts[1:]) == relative_path)
