@@ -2,35 +2,39 @@
 
 Tests use only synthetic local fixtures and public dependency metadata. No live scan output is stored in this repository.
 
-## Current development validation
+## 5.0.1 release-readiness validation
 
-The `5.0.1.dev0` development tree was validated on August 27, 2026. This is development evidence, not a release announcement.
+The 5.0.1 candidate tree was validated on August 28, 2026. This is release-readiness evidence, not a tag, GitHub release, PyPI publication, or conformance claim.
 
 ### Supported Python versions
 
-- The pinned runtime dependencies and resolved development dependencies were installed separately on Python 3.10.21, 3.12.10, and 3.14.7 on Windows.
-- All 14 embedded offline diagnostics passed on each interpreter, for 42 successful diagnostic checks.
-- All 12 core and adoption regression tests passed on each interpreter, for 36 successful test runs.
-- All four browser report tests passed on each interpreter, for 12 successful Playwright test runs.
-- Ruff, Bandit, bytecode compilation, and dependency consistency checks passed on each interpreter.
+- The protected workflow covers Python 3.10, 3.12, and 3.14 on Linux plus Python 3.12 on Windows and macOS.
+- All 19 core, adoption, source-distribution, and release-asset tests pass on Windows Python 3.10.21, 3.12.10, and 3.14.7. Hosted runs must pass the same suite before merge.
+- All four Playwright Chromium regressions pass on each of those three Windows Python versions and remain a separate required hosted gate.
+- All 14 embedded offline diagnostics pass from source on each supported Python boundary and from the wheel, source distribution, and pipx installation on Python 3.12.10.
+- Ruff, Bandit, bytecode compilation, dependency consistency, and repository punctuation checks pass on the candidate source.
 
 ### Reports and installation paths
 
 - The documented five-minute walkthrough completed against the synthetic local page and generated HTML and JSON reports.
 - The committed sample HTML and JSON reports reproduced byte for byte from the deterministic fixture builder.
 - Browser tests verified named filters, landmarks, live result counts, keyboard operation, synchronized expanded state, and no horizontal page overflow at 1440, 768, and 360 pixels.
-- A wheel and source distribution were built from the current development tree into a fresh output directory, passed Twine checks, and passed the repository distribution inspector.
-- The wheel and source distribution were installed into separate isolated environments. Both reported the expected version, loaded the runtime module from `site-packages`, passed all 14 embedded diagnostics, and had no broken requirements.
+- A wheel and normalized source distribution were built twice from the candidate tree into separate fresh directories. Both complete six-asset builds had identical filenames and bytes.
+- Twine and both repository distribution inspectors validated package metadata, archive safety, exact runtime bytes, dependency metadata, and wheel RECORD coverage.
+- The wheel and source distribution were installed into separate isolated environments. Both reported 5.0.1, loaded runtime bytes matching the standalone and repository source, passed all 14 embedded diagnostics, and had no broken requirements.
 - A local pipx installation reported the expected version and passed all 14 embedded diagnostics.
-- The installed wheel scanned a synthetic PDF through the isolated worker process and produced HTML, JSON, and CSV reports without an analysis error.
+- The standalone runtime, wheel, source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksums, and release evidence form the exact six-asset contract.
+- The SPDX document records the exact 16 pinned direct runtime dependencies and is recognized as SPDX JSON by an independent SBOM scanner.
+- Release evidence binds archive membership and artifact hashes to an exact 40-character source commit. The final protected-main candidate must be rebuilt with the verified merge commit before tagging.
 
 ### Security and repository checks
 
-- pip-audit reported no known vulnerabilities in either requirements file at test time.
+- pip-audit reported no known vulnerabilities in the runtime, development, or pinned build requirements at test time.
 - Gitleaks reported no findings in the complete commit history or the proposed tracked project files.
+- Trivy reported no high or critical dependency, secret, or configuration findings in the source and no high or critical vulnerability in the generated SPDX dependency inventory.
 - markdownlint, actionlint, YAML parsing, and relative Markdown link checks passed. External HTTP(S) destinations were not part of the relative-link check.
-- The package inspector confirmed safe archive paths, expected metadata and entry points, exact dependency metadata, and source bytes matching the repository.
-- The CodeQL and Gitleaks workflows passed local syntax and action pinning review. Their hosted scans must still pass on GitHub before merge.
+- Every GitHub Action reference is immutable or a protected same-owner reusable workflow reference admitted by repository policy.
+- CodeQL, Semgrep 1.175.0 in its hosted Linux container, Trivy, dependency review, and full-history Gitleaks must pass on the exact pull-request and protected-main commits before release approval.
 
 ## 5.0.0 release validation
 

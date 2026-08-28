@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 5.0.1 - 2026-08-28
+
 ### Added
 
 - Added continuous integration across Python 3.10, 3.12, and 3.14 with offline diagnostics, linting, static security analysis, and dependency auditing
@@ -17,7 +19,9 @@
 ### Changed
 
 - Extended Dependabot coverage to GitHub Actions, separated runtime and development update groups, and kept major Python and GitHub Actions upgrades separate from grouped minor and patch updates
-- Marked the current development source as `5.0.1.dev0` so test builds cannot be confused with the final `5.0.0` source release
+- Promoted the reviewed `5.0.1.dev0` development identity to stable version `5.0.1`
+- Added deterministic wheel, source-distribution, standalone, SPDX 2.3, checksum, and release-evidence construction
+- Added exact asset enforcement, GitHub provenance, and tag-only draft release controls
 - Made installed console help use the actual command name while preserving the source-file command name
 
 ### Corrected
