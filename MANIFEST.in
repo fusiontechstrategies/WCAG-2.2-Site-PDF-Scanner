@@ -9,5 +9,7 @@ include TESTING.md
 include THIRD_PARTY_NOTICES.md
 include requirements.txt
 include requirements-dev.txt
+include requirements-build.txt
 recursive-include examples *.html *.json *.md *.png *.py
 recursive-include scripts *.py
+recursive-include tests *.py
