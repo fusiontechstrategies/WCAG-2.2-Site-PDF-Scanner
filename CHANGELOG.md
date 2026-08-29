@@ -6,6 +6,7 @@
 
 - Included the active versioned release notes and tag workflow in the source distribution so its bundled release-construction tests pass from an extracted package
 - Added an archive-membership regression that verifies both release inputs before any candidate is accepted
+- Canonicalized regular source-archive member modes so mounted and native build filesystems produce identical bytes
 
 ### Changed
 
