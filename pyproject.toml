@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wcag-site-pdf-scanner"
-version = "5.0.1"
+version = "5.0.2"
 description = "Evidence-first WCAG 2.2 scanning for websites, local HTML, and PDF documents"
 readme = "README.md"
 requires-python = ">=3.10,<3.15"

@@ -13,7 +13,7 @@ The scanner deliberately avoids claiming that automation proves conformance. Eve
 
 > Automated testing finds only some accessibility barriers. It does not establish WCAG, Section 508, or PDF/UA conformance. Complete evaluation requires manual review, assistive-technology testing, and judgment about the content and its purpose.
 
-Version 5.0.1 is the current release candidate. Until its GitHub release lists the tested standalone runtime, wheel, normalized source distribution, SPDX SBOM, checksums, release evidence, and provenance, evaluate the source from this repository rather than a similarly named download. See [RELEASING.md](RELEASING.md) for the exact artifact and publication gates.
+Version 5.0.2 is the corrected release candidate. The public `v5.0.1` tag remains fixed, but its draft release was not published after qualification found a source-package self-test gap. Until a 5.0.2 GitHub release lists the tested standalone runtime, wheel, normalized source distribution, SPDX SBOM, checksums, release evidence, and provenance, evaluate the source from this repository rather than a similarly named download. See [RELEASING.md](RELEASING.md) for the exact artifact and publication gates.
 
 ## See the output first
 
@@ -122,7 +122,7 @@ On macOS or Linux, activate with `source .venv/bin/activate`.
 
 ### Local package and pipx validation
 
-The repository is package-ready for local validation, but neither a 5.0.1 GitHub release nor a public PyPI project has been announced. Do not assume that an unrelated package with a similar name is this project.
+The repository is package-ready for local validation, but neither a 5.0.2 GitHub release nor a public PyPI project has been announced. Do not assume that an unrelated package with a similar name is this project.
 
 Install the current checkout into an active virtual environment:
 
@@ -142,7 +142,7 @@ Pipx separates Python package environments; it is not a security sandbox. Review
 
 Both installed forms preserve the original `WCAG_Site_PDF_Scanner.py` module and add the `wcag-site-pdf-scanner` command. The source-file commands in this README remain valid.
 
-The 5.0.1 release path builds exactly six files twice and requires identical bytes: an exact standalone runtime, normalized pure-Python wheel, normalized source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksum file, and commit-bound release evidence. Generated package metadata, archive fields, order, timestamps, ownership, permissions, and line endings are canonicalized for cross-platform reproducibility. A tag pointing to a verified protected-main commit can create only a draft GitHub release. Publication and any future PyPI setup remain separate maintainer decisions.
+The 5.0.2 release path builds exactly six files twice and requires identical bytes: an exact standalone runtime, normalized pure-Python wheel, normalized source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksum file, and commit-bound release evidence. Generated package metadata, archive fields, order, timestamps, ownership, permissions, and line endings are canonicalized for cross-platform reproducibility. A tag pointing to a verified protected-main commit can create only a draft GitHub release. Publication and any future PyPI setup remain separate maintainer decisions.
 
 Optional language analysis uses NLTK data that is never downloaded automatically. Install it explicitly if needed:
 

@@ -1,6 +1,17 @@
 # Changelog
 
-## Unreleased
+## 5.0.2 - 2026-08-28
+
+### Corrected
+
+- Included the active versioned release notes and tag workflow in the source distribution so its bundled release-construction tests pass from an extracted package
+- Added an archive-membership regression that verifies both release inputs before any candidate is accepted
+- Canonicalized regular source-archive member modes so mounted and native build filesystems produce identical bytes
+
+### Changed
+
+- Advanced the recovery candidate to 5.0.2 because the existing public `v5.0.1` tag remains fixed and its draft release was not published
+- Replaced the hard-coded current-version manifest entry with a generic release-notes rule so later patch versions inherit the same self-test contract
 
 ## 5.0.1 - 2026-08-28
 

@@ -5,6 +5,7 @@ import json
 import os
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,7 +16,7 @@ from scripts import prepare_release
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-VERSION = "5.0.1"
+VERSION = "5.0.2"
 TAG = f"v{VERSION}"
 SOURCE_COMMIT = "a" * 40
 SOURCE_DATE_EPOCH = 315532800
@@ -68,6 +69,13 @@ class ReleasePreparationTests(unittest.TestCase):
             second_dist.mkdir()
             self.build_distributions(first_dist)
             self.build_distributions(second_dist)
+            expected_sdist_inputs = {
+                f"wcag_site_pdf_scanner-{VERSION}/.github/release-notes/{TAG}.md",
+                f"wcag_site_pdf_scanner-{VERSION}/.github/workflows/release.yml",
+            }
+            for dist in (first_dist, second_dist):
+                with tarfile.open(next(dist.glob("*.tar.gz")), "r:gz") as archive:
+                    self.assertTrue(expected_sdist_inputs.issubset({member.name for member in archive.getmembers()}))
             first = self.prepare(root, "first-release", first_dist)
             second = self.prepare(root, "second-release", second_dist)
             self.assertEqual(prepare_release.expected_asset_names(VERSION), tuple(path.name for path in first))
@@ -124,7 +132,7 @@ class ReleasePreparationTests(unittest.TestCase):
                     PROJECT_ROOT,
                     dist,
                     root / "version-mismatch",
-                    "5.0.2",
+                    "5.0.3",
                     TAG,
                     SOURCE_COMMIT,
                     SOURCE_DATE_EPOCH,
