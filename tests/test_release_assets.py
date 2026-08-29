@@ -16,7 +16,7 @@ from scripts import prepare_release
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-VERSION = "5.0.1"
+VERSION = "5.0.2"
 TAG = f"v{VERSION}"
 SOURCE_COMMIT = "a" * 40
 SOURCE_DATE_EPOCH = 315532800
@@ -132,7 +132,7 @@ class ReleasePreparationTests(unittest.TestCase):
                     PROJECT_ROOT,
                     dist,
                     root / "version-mismatch",
-                    "5.0.2",
+                    "5.0.3",
                     TAG,
                     SOURCE_COMMIT,
                     SOURCE_DATE_EPOCH,

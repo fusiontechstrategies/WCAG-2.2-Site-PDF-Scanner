@@ -2,9 +2,9 @@
 
 Tests use only synthetic local fixtures and public dependency metadata. No live scan output is stored in this repository.
 
-## 5.0.1 release-readiness validation
+## 5.0.2 release-readiness validation
 
-The 5.0.1 candidate tree was validated on August 28, 2026. This is release-readiness evidence, not a tag, GitHub release, PyPI publication, or conformance claim.
+The 5.0.2 candidate tree was validated on August 28, 2026. This is release-readiness evidence, not a tag, GitHub release, PyPI publication, or conformance claim.
 
 ### Supported Python versions
 
@@ -22,7 +22,7 @@ The 5.0.1 candidate tree was validated on August 28, 2026. This is release-readi
 - A normalized wheel and source distribution were built twice from the candidate tree into separate fresh directories. Both complete six-asset builds had identical filenames and bytes.
 - Synthetic Windows-style and POSIX-style generated package metadata normalize to the same archive bytes. The exact Linux-hosted candidate must also match the independently built Windows candidate before release approval.
 - Twine and both repository distribution inspectors validated package metadata, archive safety, exact runtime bytes, dependency metadata, and wheel RECORD coverage.
-- The wheel and source distribution were installed into separate isolated environments. Both reported 5.0.1, loaded runtime bytes matching the standalone and repository source, passed all 14 embedded diagnostics, and had no broken requirements.
+- The wheel and source distribution were installed into separate isolated environments. Both reported 5.0.2, loaded runtime bytes matching the standalone and repository source, passed all 14 embedded diagnostics, and had no broken requirements.
 - A local pipx installation reported the expected version and passed all 14 embedded diagnostics.
 - The standalone runtime, wheel, source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksums, and release evidence form the exact six-asset contract.
 - The SPDX document records the exact 16 pinned direct runtime dependencies and is recognized as SPDX JSON by an independent SBOM scanner.
