@@ -37,7 +37,7 @@ This application processes content that may be hostile:
 - HTML output escaping and URL-scheme filtering
 - Self-contained HTML reports with restrictive content security policies
 - CSV formula-injection neutralization
-- No automatic NLTK downloads or other import-time network activity
+- No automatic language-data downloads or other import-time network activity
 - No remote fonts or presentation assets in generated reports
 - Review-first remediation with source containment, template and reparse-point refusal, stale-write detection, unique backups, atomic writes, rescanning, and rollback
 

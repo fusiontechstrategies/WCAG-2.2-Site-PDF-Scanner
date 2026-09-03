@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Security
+
+- Removed the NLTK dependency affected by CVE-2026-81726 and replaced textstat with direct Pyphen-backed readability helpers
+- Restored the complex-word analysis path that called an API absent from the pinned textstat release
+- Changed the inert sample form to use a read-only request method
+
 ## 5.0.1 - 2026-08-28
 
 ### Added

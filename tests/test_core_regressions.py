@@ -117,6 +117,21 @@ class JsonReportRegressionTests(unittest.TestCase):
         self.assertIsInstance(report.fixes_applied, defaultdict)
 
 
+class TextAnalysisDependencyTests(unittest.TestCase):
+    def test_text_analysis_runs_without_nltk_runtime_dependency(self):
+        requirements = (Path(__file__).resolve().parents[1] / "requirements.txt").read_text(encoding="utf-8")
+        self.assertNotIn("nltk", requirements.lower())
+        self.assertNotIn("textstat", requirements.lower())
+        self.assertIn("pyphen==0.18.1", requirements)
+
+        paragraph = "Clear content helps readers understand important public services and complete essential tasks. " * 6
+        soup = scanner.BeautifulSoup(f"<html><body><main>{paragraph}</main></body></html>", "lxml")
+        issues, passed = scanner.ContentAnalyzer(scanner.WCAGLevel.AAA).analyze(soup, "sample.html")
+
+        self.assertGreater(len(issues) + len(passed), 0)
+        self.assertFalse(any("analysis skipped" in result.description.lower() for result in passed))
+
+
 class LocalPathRegressionTests(unittest.IsolatedAsyncioTestCase):
     @staticmethod
     def _tool(target: str) -> scanner.A11yPowerTool:
