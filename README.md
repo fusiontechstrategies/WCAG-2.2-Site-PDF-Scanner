@@ -144,12 +144,6 @@ Both installed forms preserve the original `WCAG_Site_PDF_Scanner.py` module and
 
 The 5.0.1 release path builds exactly six files twice and requires identical bytes: an exact standalone runtime, normalized pure-Python wheel, normalized source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksum file, and commit-bound release evidence. Generated package metadata, archive fields, order, timestamps, ownership, permissions, and line endings are canonicalized for cross-platform reproducibility. A tag pointing to a verified protected-main commit can create only a draft GitHub release. Publication and any future PyPI setup remain separate maintainer decisions.
 
-Optional language analysis uses NLTK data that is never downloaded automatically. Install it explicitly if needed:
-
-```powershell
-python -m nltk.downloader punkt cmudict
-```
-
 ## Interactive use
 
 ```powershell

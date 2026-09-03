@@ -22,14 +22,13 @@ When using the `--axe-script` option to supply a local axe-core copy, retain the
 | defusedxml | 0.7.1 | PSF-2.0 style license |
 | fpdf2 | 2.8.8 | LGPL-3.0-only |
 | lxml | 6.1.1 | BSD-3-Clause |
-| nltk | 3.10.3 | Apache-2.0 |
 | Pillow | 12.3.0 | MIT-CMU |
 | pikepdf | 10.11.0 | MPL-2.0 |
 | playwright | 1.62.0 | Apache-2.0 |
+| pyphen | 0.18.1 | GPL-2.0-or-later OR LGPL-2.1-or-later OR MPL-1.1 |
 | pyspellchecker | 0.9.0 | MIT |
 | questionary | 2.1.1 | MIT |
 | rich | 15.0.0 | MIT |
-| textstat | 0.7.13 | MIT |
 
 Transitive dependencies are not exhaustively reproduced here. Generate an environment-specific inventory before redistribution:
 

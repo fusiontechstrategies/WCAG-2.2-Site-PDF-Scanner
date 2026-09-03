@@ -49,6 +49,7 @@ import click
 import cssutils
 from cssutils.css import CSSStyleRule, Property
 from defusedxml import ElementTree as SafeET
+import pyphen
 try:
     from playwright.async_api import Browser, Error as PlaywrightError, Page, Playwright, async_playwright
     PLAYWRIGHT_READY = True
@@ -998,19 +999,41 @@ DEFAULT_USER_AGENT = f"WCAG-Site-PDF-Scanner/{APP_VERSION} (+accessibility testi
 ################################################################################
 # BEGIN analyzers.py
 
-# Optional NLP support. Importing the application never downloads data or makes
-# network requests. Use the diagnostics command for explicit setup guidance.
-try:
-    import nltk
-    from textstat import flesch_kincaid_grade, textstat
-    NLTK_READY = True
-    try:
-        nltk.data.find('corpora/cmudict')
-        nltk.data.find('tokenizers/punkt')
-    except LookupError:
-        NLTK_READY = False
-except ImportError:
-    NLTK_READY = False
+# Readability analysis uses Pyphen's bundled English dictionary. This avoids
+# runtime downloads and removes the NLTK model-persistence surface.
+_READABILITY_WORD_RE = re.compile(r"[^\W\d_]+(?:['-][^\W\d_]+)*", re.UNICODE)
+_READABILITY_HYPHENATOR = pyphen.Pyphen(lang="en_US")
+
+
+def _readability_words(text: str) -> List[str]:
+    """Return letter-based words while preserving contractions and compounds."""
+    return _READABILITY_WORD_RE.findall(text)
+
+
+def _readability_syllable_count(word: str) -> int:
+    """Estimate English syllables from Pyphen hyphenation points."""
+    parts = [part for part in re.split(r"['-]+", word.lower()) if part]
+    return sum(max(1, len(_READABILITY_HYPHENATOR.positions(part)) + 1) for part in parts)
+
+
+def _readability_sentence_count(text: str) -> int:
+    """Count nontrivial sentences using the same threshold as the prior engine."""
+    if not text.strip():
+        return 0
+    sentences = re.findall(r"\b[^.!?]+[.!?]*", text, re.UNICODE)
+    count = sum(1 for sentence in sentences if len(_readability_words(sentence)) > 2)
+    return max(1, count)
+
+
+def _flesch_kincaid_grade(text: str) -> float:
+    """Calculate an English Flesch-Kincaid grade estimate."""
+    words = _readability_words(text)
+    sentence_count = _readability_sentence_count(text)
+    if not words or not sentence_count:
+        return 0.0
+    syllable_count = sum(_readability_syllable_count(word) for word in words)
+    score = 0.39 * (len(words) / sentence_count) + 11.8 * (syllable_count / len(words)) - 15.59
+    return round(score, 1)
 
 # Optional spelling support (SortSite-style spell check). Degrades gracefully if not installed.
 try:
@@ -2898,10 +2921,6 @@ class ContentAnalyzer(BaseAnalyzer):
         self.url = url_or_path if url_or_path.startswith('http') else None
         self.current_soup = soup
 
-        if not NLTK_READY:
-            self._add_passed("INFO_CONTENT", "Content analysis skipped (NLTK data not available).", url=url_or_path)
-            return self.issues, self.passed
-
         # Extract meaningful text from main content areas
         content_containers = soup.find_all(['main', 'article', 'section'])
         if not content_containers:
@@ -2928,7 +2947,7 @@ class ContentAnalyzer(BaseAnalyzer):
         # Criterion 3.1.5 (Reading Level) - Level AAA
         if WCAGLevel.AAA <= self.level:
             try:
-                grade_level = flesch_kincaid_grade(text)
+                grade_level = _flesch_kincaid_grade(text)
                 if grade_level > 9:
                     self._add_issue(
                         criterion="3.1.5", severity=IssueSeverity.MODERATE,
@@ -2945,10 +2964,10 @@ class ContentAnalyzer(BaseAnalyzer):
 
         # Criterion 3.1.3 (Unusual Words) & 3.1.4 (Abbreviations) - Level AAA
         if WCAGLevel.AAA <= self.level:
-            words = textstat.get_words(text)
+            words = _readability_words(text)
 
             # Complex words heuristic
-            complex_words = [w for w in words if textstat.syllable_count(w) >= 4 and len(w) > 6 \
+            complex_words = [w for w in words if _readability_syllable_count(w) >= 4 and len(w) > 6 \
                              and not (w.isupper() and len(w) > 1) and not w.isdigit()]
 
             if complex_words:
@@ -8425,7 +8444,7 @@ def diagnostics_command(self_test: bool):
             version = "Not installed"
         table.add_row(package, version)
     table.add_row("Playwright import", "Ready" if PLAYWRIGHT_READY else "Unavailable")
-    table.add_row("NLTK data", "Ready" if NLTK_READY else "Optional data not installed")
+    table.add_row("Text analysis", "Built in")
     console.print(table)
 
     if self_test:
