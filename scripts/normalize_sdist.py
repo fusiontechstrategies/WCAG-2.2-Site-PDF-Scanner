@@ -152,7 +152,9 @@ def normalize_sdist(path: Path, source_date_epoch: int) -> str:
                 else:
                     require(value is not None, "Regular archive member has no data")
                     normalized.type = tarfile.REGTYPE
-                    normalized.mode = 0o755 if original.mode & 0o111 else 0o644
+                    # Source-distribution members are data. Canonicalize their
+                    # mode so mounted filesystems cannot invent executability.
+                    normalized.mode = 0o644
                     normalized.size = len(value)
                     output.addfile(normalized, BytesIO(value))
         temporary_path.write_bytes(build_stored_gzip(raw_tar.getvalue(), source_date_epoch))

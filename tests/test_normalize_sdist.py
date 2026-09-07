@@ -11,7 +11,7 @@ from scripts import normalize_sdist as normalizer
 
 class NormalizeSdistTests(unittest.TestCase):
     @staticmethod
-    def make_archive(path: Path, mtime: int) -> None:
+    def make_archive(path: Path, mtime: int, file_mode: int = 0o666) -> None:
         with tarfile.open(path, mode="w:gz") as archive:
             directory = tarfile.TarInfo("package-1.0")
             directory.type = tarfile.DIRTYPE
@@ -20,18 +20,18 @@ class NormalizeSdistTests(unittest.TestCase):
             archive.addfile(directory)
             value = b"synthetic source\n"
             member = tarfile.TarInfo("package-1.0/source.py")
-            member.mode = 0o666
+            member.mode = file_mode
             member.mtime = mtime
             member.size = len(value)
             archive.addfile(member, io.BytesIO(value))
 
-    def test_different_archive_times_normalize_to_identical_bytes(self):
+    def test_different_archive_times_and_modes_normalize_to_identical_bytes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             first = root / "first.tar.gz"
             second = root / "second.tar.gz"
-            self.make_archive(first, 100)
-            self.make_archive(second, 200)
+            self.make_archive(first, 100, 0o644)
+            self.make_archive(second, 200, 0o755)
             first_hash = normalizer.normalize_sdist(first, 50)
             second_hash = normalizer.normalize_sdist(second, 50)
             self.assertEqual(first_hash, second_hash)
