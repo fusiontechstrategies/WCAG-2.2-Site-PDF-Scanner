@@ -47,15 +47,15 @@ python -m pip install -r requirements-build.txt
 python -m build --no-isolation --wheel --sdist --outdir package-dist
 python scripts\normalize_wheel.py `
   --source-date-epoch $candidateEpoch `
-  package-dist\wcag_site_pdf_scanner-5.0.1-py3-none-any.whl
+  package-dist\wcag_site_pdf_scanner-5.0.2-py3-none-any.whl
 python scripts\normalize_sdist.py `
   --source-date-epoch $candidateEpoch `
-  package-dist\wcag_site_pdf_scanner-5.0.1.tar.gz
+  package-dist\wcag_site_pdf_scanner-5.0.2.tar.gz
 python -m twine check package-dist\*
 python scripts\verify_distribution.py package-dist
 python scripts\prepare_release.py `
-  --version 5.0.1 `
-  --tag v5.0.1 `
+  --version 5.0.2 `
+  --tag v5.0.2 `
   --source-commit $candidateCommit `
   --source-date-epoch $candidateEpoch `
   --dist-directory package-dist `

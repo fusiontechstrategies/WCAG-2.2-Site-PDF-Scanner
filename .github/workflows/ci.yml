@@ -221,8 +221,8 @@ jobs:
           python -m twine check dist/*
           python scripts/verify_distribution.py dist
           python scripts/prepare_release.py \
-            --version 5.0.1 \
-            --tag v5.0.1 \
+            --version 5.0.2 \
+            --tag v5.0.2 \
             --source-commit "$GITHUB_SHA" \
             --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
             --dist-directory dist \
@@ -242,8 +242,8 @@ jobs:
             --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
             reproducibility-dist/*.tar.gz
           python scripts/prepare_release.py \
-            --version 5.0.1 \
-            --tag v5.0.1 \
+            --version 5.0.2 \
+            --tag v5.0.2 \
             --source-commit "$GITHUB_SHA" \
             --source-date-epoch "${{ steps.build-epoch.outputs.value }}" \
             --dist-directory reproducibility-dist \
@@ -281,7 +281,7 @@ jobs:
       - name: Preserve the exact release candidate
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: wcag-site-pdf-scanner-v5.0.1-candidate-${{ github.sha }}
+          name: wcag-site-pdf-scanner-v5.0.2-candidate-${{ github.sha }}
           path: release-candidate/
           if-no-files-found: error
           retention-days: 30
