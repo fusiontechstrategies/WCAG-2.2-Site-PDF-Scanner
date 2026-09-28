@@ -50,3 +50,5 @@ Changes to package metadata, release controls, or included files also require tw
 ## Pull requests
 
 Describe the problem, the behavior change, security impact, test evidence, and any manual evaluation performed. Keep unrelated formatting changes out of focused fixes.
+
+By participating, you agree to follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
