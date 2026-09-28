@@ -19,7 +19,7 @@ jobs:
       contents: read
       security-events: write
     # All external revisions used by the shared workflow are explicitly allowlisted.
-    uses: fusiontechstrategies/FusionTechStrategies/.github/workflows/reusable-security.yml@f64c8eb98fa6c907e013d158089ea6ab38e91ad7
+    uses: fusiontechstrategies/FusionTechStrategies/.github/workflows/reusable-security.yml@32d789cfd4c97b27c0b389ac9265d415ddbb78ca
     with:
       # The HTML examples are offline accessibility fixtures, not executable server templates.
       semgrep_targets: |
@@ -27,3 +27,4 @@ jobs:
         examples/build_sample_report.py
         scripts
         tests
+      semgrep_timeout_seconds: 60
