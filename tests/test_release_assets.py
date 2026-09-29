@@ -16,7 +16,7 @@ from scripts import prepare_release
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-VERSION = "5.0.2"
+VERSION = "5.0.3"
 TAG = f"v{VERSION}"
 SOURCE_COMMIT = "a" * 40
 SOURCE_DATE_EPOCH = 315532800
