@@ -99,17 +99,10 @@ Before publishing the draft:
 
 Publish only after every check passes. Then repeat the public download, digest, provenance, installation, diagnostics, and synthetic report checks against the public URLs.
 
-## PyPI remains separate
+## PyPI publication is a separate decision
 
-This repository has no PyPI publication workflow. The normalized project name must be rechecked immediately before any future setup because an unavailable page does not reserve the namespace.
+The manually dispatched `.github/workflows/publish.yml` workflow accepts an existing public, stable GitHub release tag. It checks that the tagged commit is GitHub-verified and reachable from `main`, validates the exact six-asset set, checks release hashes and evidence, verifies distribution contents and GitHub provenance, and uploads only the verified wheel and source distribution. The upload job uses the protected `pypi` environment and a short-lived OpenID Connect credential; no PyPI API token is stored in the repository.
 
-Before any PyPI publication:
+Before the first PyPI publication, recheck that the normalized project name is available. An unavailable project page does not reserve the namespace. Secure the PyPI maintainer account with two-factor authentication and store recovery codes outside the repository. Register the exact repository, `publish.yml`, and `pypi` environment as a pending trusted publisher. Require maintainer approval on the GitHub environment and allowlist the pinned PyPA publishing Action.
 
-1. Secure the PyPI maintainer account with two-factor authentication and store recovery codes outside the repository.
-2. Register the exact GitHub repository and future workflow as a pending trusted publisher.
-3. Create a protected GitHub `pypi` environment with required maintainer approval.
-4. Add the exact immutable PyPA publishing Action to the repository allowlist.
-5. Add a reviewed workflow that downloads and revalidates the exact public GitHub distributions before requesting a short-lived OpenID Connect credential.
-6. Never add a long-lived PyPI API token.
-
-PyPI setup and publication require a separate explicit decision after the first GitHub release is proven.
+After the public GitHub release has passed publication review and the maintainer has separately decided to publish its distributions to PyPI, dispatch `publish.yml` on protected `main` with the exact release tag. Review the verification job before approving the `pypi` deployment. Confirm the PyPI project lists the same version and file hashes, install the exact version in a clean environment, and run the offline diagnostics and synthetic walkthrough before announcing the registry package.
