@@ -59,7 +59,7 @@ python WCAG_Site_PDF_Scanner.py web examples/sample-site/index.html \
   --no-spell-check
 ```
 
-Then open `a11y_reports/report.html` locally.
+For the v5.0.2 sample, expect four reported issues and both `a11y_reports/report.html` and `a11y_reports/report.json`. The CLI also explains that browser-based analysis is skipped for this local file; that is expected, and the reported checks do not establish conformance. Open `a11y_reports/report.html` locally to inspect the evidence.
 
 ## Choose a workflow
 
