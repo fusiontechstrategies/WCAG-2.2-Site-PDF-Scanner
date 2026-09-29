@@ -19,7 +19,7 @@ For the reasoning behind the reporting model, read [Accessibility scans need to 
 
 > Automated testing finds only some accessibility barriers. It does not establish WCAG, Section 508, or PDF/UA conformance. Complete evaluation requires manual review, assistive-technology testing, and judgment about the content and its purpose.
 
-Version 5.0.2 is the current public GitHub release. Its six qualified assets include the standalone runtime, wheel, normalized source distribution, SPDX SBOM, checksums, and commit-bound release evidence. Verify downloads against the [v5.0.2 release](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.2). The public `v5.0.1` tag remains fixed, but its draft release was not published after qualification found a source-package self-test gap.
+Version 5.0.2 is available on [PyPI](https://pypi.org/project/wcag-site-pdf-scanner/5.0.2/) and as a public GitHub release. Install the verified package with `python -m pip install wcag-site-pdf-scanner==5.0.2`, then run `wcag-site-pdf-scanner diagnostics` for the 14 offline self-tests. Its six GitHub assets include the standalone runtime, wheel, normalized source distribution, SPDX SBOM, checksums, and commit-bound release evidence. Verify downloads against the [v5.0.2 release](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.2). The public `v5.0.1` tag remains fixed, but its draft release was not published after qualification found a source-package self-test gap.
 
 ## See the output first
 
