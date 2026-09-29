@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.3 - 2026-09-29
+
+### Corrected
+
+- Removed the unsupported Beta development-status classifier from package metadata. Scanner behavior and manual-review boundaries are unchanged from 5.0.2.
+
 ## 5.0.2 - 2026-08-28
 
 ### Corrected
