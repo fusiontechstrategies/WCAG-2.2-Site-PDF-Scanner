@@ -24,6 +24,6 @@ Repository: https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner
 
 Sample report: https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/tree/main/examples/sample-report
 
-Current release: https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.2
+Current release: https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.3
 
 Accessibility statement: https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/ACCESSIBILITY.md
