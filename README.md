@@ -19,7 +19,7 @@ For the reasoning behind the reporting model, read [Accessibility scans need to 
 
 > Automated testing finds only some accessibility barriers. It does not establish WCAG, Section 508, or PDF/UA conformance. Complete evaluation requires manual review, assistive-technology testing, and judgment about the content and its purpose.
 
-Version 5.0.2 is available on [PyPI](https://pypi.org/project/wcag-site-pdf-scanner/5.0.2/) and as a public GitHub release. Install the verified package with `python -m pip install wcag-site-pdf-scanner==5.0.2`, then run `wcag-site-pdf-scanner diagnostics` for the 14 offline self-tests. Its six GitHub assets include the standalone runtime, wheel, normalized source distribution, SPDX SBOM, checksums, and commit-bound release evidence. Verify downloads against the [v5.0.2 release](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.2). The public `v5.0.1` tag remains fixed, but its draft release was not published after qualification found a source-package self-test gap.
+Version 5.0.3 is available on [PyPI](https://pypi.org/project/wcag-site-pdf-scanner/5.0.3/) and as a public GitHub release. Install the verified package with `python -m pip install wcag-site-pdf-scanner==5.0.3`, then run `wcag-site-pdf-scanner diagnostics` for the 14 offline self-tests. Its six GitHub assets include the standalone runtime, wheel, normalized source distribution, SPDX SBOM, checksums, and commit-bound release evidence. Verify downloads against the [v5.0.3 release](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.3). The public `v5.0.1` tag remains fixed, but its draft release was not published after qualification found a source-package self-test gap.
 
 ## See the output first
 
@@ -59,7 +59,7 @@ python WCAG_Site_PDF_Scanner.py web examples/sample-site/index.html \
   --no-spell-check
 ```
 
-For the v5.0.2 sample, expect four reported issues and both `a11y_reports/report.html` and `a11y_reports/report.json`. The CLI also explains that browser-based analysis is skipped for this local file; that is expected, and the reported checks do not establish conformance. Open `a11y_reports/report.html` locally to inspect the evidence.
+For the v5.0.3 sample, expect four reported issues and both `a11y_reports/report.html` and `a11y_reports/report.json`. The CLI also explains that browser-based analysis is skipped for this local file; that is expected, and the reported checks do not establish conformance. Open `a11y_reports/report.html` locally to inspect the evidence.
 
 ## Choose a workflow
 
@@ -128,7 +128,7 @@ On macOS or Linux, activate with `source .venv/bin/activate`.
 
 ### Local package and pipx validation
 
-The qualified 5.0.2 wheel and source distribution are available from the [GitHub release](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.2), but no public PyPI project has been announced. Do not assume that an unrelated package with a similar name is this project.
+The qualified 5.0.3 wheel and source distribution are available from the [GitHub release](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/releases/tag/v5.0.3) and the linked PyPI project above. Verify the exact project name and file hashes before installation.
 
 Install the current checkout into an active virtual environment:
 
@@ -148,7 +148,7 @@ Pipx separates Python package environments; it is not a security sandbox. Review
 
 Both installed forms preserve the original `WCAG_Site_PDF_Scanner.py` module and add the `wcag-site-pdf-scanner` command. The source-file commands in this README remain valid.
 
-The 5.0.2 release path built exactly six files twice and required identical bytes: an exact standalone runtime, normalized pure-Python wheel, normalized source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksum file, and commit-bound release evidence. Generated package metadata, archive fields, order, timestamps, ownership, permissions, and line endings were canonicalized for cross-platform reproducibility. The verified draft was reviewed before public release. Any future PyPI setup remains a separate maintainer decision.
+The 5.0.3 release path built exactly six files twice and required identical bytes: an exact standalone runtime, normalized pure-Python wheel, normalized source distribution, SPDX 2.3 dependency SBOM, SHA-256 checksum file, and commit-bound release evidence. Generated package metadata, archive fields, order, timestamps, ownership, permissions, and line endings were canonicalized for cross-platform reproducibility. The verified draft was reviewed before public release. PyPI publication used a separate protected trusted-publishing workflow.
 
 ## Interactive use
 
