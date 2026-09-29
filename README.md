@@ -11,6 +11,8 @@ WCAG 2.2 Site and PDF Scanner examines websites, local HTML, and PDF documents t
 
 The scanner deliberately avoids claiming that automation proves conformance. Every result describes what was tested, what evidence was observed, and where human review is still required.
 
+**Help improve the first-use path:** Accessibility practitioners and web developers can try a 15-minute [synthetic walkthrough and share feedback](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/discussions/22).
+
 Read the project's [accessibility statement](ACCESSIBILITY.md) for current support, known limitations, and feedback options.
 
 For the reasoning behind the reporting model, read [Accessibility scans need to say what they did not prove](docs/articles/accessibility-scans-need-to-say-what-they-did-not-prove.md).
