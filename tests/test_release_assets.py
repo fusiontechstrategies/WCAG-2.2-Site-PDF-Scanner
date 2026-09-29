@@ -132,7 +132,7 @@ class ReleasePreparationTests(unittest.TestCase):
                     PROJECT_ROOT,
                     dist,
                     root / "version-mismatch",
-                    "5.0.3",
+                    "5.0.4",
                     TAG,
                     SOURCE_COMMIT,
                     SOURCE_DATE_EPOCH,
