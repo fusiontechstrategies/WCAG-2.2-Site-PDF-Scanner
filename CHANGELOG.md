@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Raised the supported Python floor to 3.11 because Pillow 13 no longer supports Python 3.10.
+
+### Security
+
+- Upgraded Pillow to 13.0.0 and setuptools to 84.1.0 to resolve newly published dependency advisories.
+
 ## 5.0.3 - 2026-09-29
 
 ### Corrected
