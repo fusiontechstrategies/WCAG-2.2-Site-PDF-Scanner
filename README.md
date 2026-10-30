@@ -1,5 +1,9 @@
 # WCAG 2.2 Site and PDF Scanner
 
+<p align="center">
+  <img src=".github/assets/social-preview.jpg" width="960" alt="WCAG 2.2 Site and PDF Scanner: Find barriers. Prove fixes.">
+</p>
+
 [![CI](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/codeql.yml/badge.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/codeql.yml)
 [![Python 3.12 through 3.14](https://img.shields.io/badge/Python-3.12%20through%203.14-3776AB.svg)](https://www.python.org/downloads/)
@@ -67,8 +71,8 @@ For the v5.0.3 sample, expect four reported issues and both `a11y_reports/report
 
 | Goal | Start here | Important boundary |
 |---|---|---|
-| Review one public page | `web URL --scope page` | Dynamic checks need Playwright Chromium. |
-| Inventory a public site | `web URL --scope site --max-urls 500` | Set a safety cap and use a considerate crawl delay. |
+| Review one public page | `web URL --scope page --bulk-mode static` | This example explicitly selects bounded static analysis. |
+| Inventory a public site | `web URL --scope site --max-urls 500 --bulk-mode static` | Set a safety cap and use a considerate crawl delay. |
 | Inspect local source | `web PATH` | Local files receive static analysis; serve them locally for browser behavior. |
 | Inspect PDF evidence | `pdf PATH_OR_URL` | Results are conservative evidence, not PDF/UA certification. |
 | Gate a build | Add `--ci-mode` | The command fails on open critical or serious automated findings. |
@@ -117,6 +121,14 @@ unless the target is an IP literal or `--allow-private-hosts` is explicitly set,
 because Chromium cannot bind its independent DNS connection to the address
 validated by the scanner. This prevents DNS rebinding from bypassing the
 private-address policy.
+
+Use browser analysis for a remote hostname only on an explicitly authorized
+network where private-destination access is acceptable. The opt-in broadens the
+network boundary for that scan:
+
+```powershell
+python WCAG_Site_PDF_Scanner.py web https://example.com --scope page --allow-private-hosts
+```
 
 ## Installation
 
@@ -171,13 +183,13 @@ The menu offers website and local HTML scanning, PDF scanning, PDF discovery, an
 Scan one web page:
 
 ```powershell
-python WCAG_Site_PDF_Scanner.py web https://example.com --scope page
+python WCAG_Site_PDF_Scanner.py web https://example.com --scope page --bulk-mode static
 ```
 
 Scan an entire site with bounded discovery:
 
 ```powershell
-python WCAG_Site_PDF_Scanner.py web https://example.com --scope site --max-urls 500
+python WCAG_Site_PDF_Scanner.py web https://example.com --scope site --max-urls 500 --bulk-mode static
 ```
 
 Omit `--max-urls` when you do not want an artificial page-count ceiling. Real capacity still depends on time, memory, storage, the target site's behavior, and crawl exclusions. For unattended or production use, an explicit safety cap is strongly recommended.
@@ -250,7 +262,7 @@ Remote websites are never edited. PDF results provide evidence and remediation g
 The legacy convenience form remains available. The application determines whether the target is web/HTML or PDF:
 
 ```powershell
-python WCAG_Site_PDF_Scanner.py https://example.com
+python WCAG_Site_PDF_Scanner.py https://example.com --bulk-mode static
 python WCAG_Site_PDF_Scanner.py C:\documents\example.pdf
 ```
 
