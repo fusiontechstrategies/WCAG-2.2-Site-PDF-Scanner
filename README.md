@@ -112,6 +112,12 @@ Read [SECURITY.md](SECURITY.md) before scanning untrusted or internal content.
 - Windows, macOS, or Linux
 - Chromium installed through Playwright for dynamic web analysis
 
+For remote hostnames, use `--bulk-mode static`. Browser analysis is fail-closed
+unless the target is an IP literal or `--allow-private-hosts` is explicitly set,
+because Chromium cannot bind its independent DNS connection to the address
+validated by the scanner. This prevents DNS rebinding from bypassing the
+private-address policy.
+
 ## Installation
 
 ### Supported source installation

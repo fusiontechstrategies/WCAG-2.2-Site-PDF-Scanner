@@ -471,6 +471,7 @@
   "all_urls_crawled": [
     "https://example.invalid/community-services"
   ],
+  "analysis_errors": [],
   "broken_links": {},
   "fixes_applied": {},
   "analysis_duration": 0.42,
@@ -481,6 +482,8 @@
     "analysis_duration_seconds": 0.42,
     "total_urls_crawled": 1,
     "total_files_analyzed": 0,
+    "analysis_status": "complete",
+    "analysis_errors": [],
     "total_issues": 4,
     "total_passed_checks": 33,
     "passed_check_scope": "Narrow automated checks with no detected failure; not criterion conformance",

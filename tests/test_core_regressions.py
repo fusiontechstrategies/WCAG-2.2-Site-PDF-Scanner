@@ -3,14 +3,157 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import threading
 import tempfile
 import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from collections import defaultdict
 from contextlib import asynccontextmanager, suppress
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
+from click.testing import CliRunner
+
 import WCAG_Site_PDF_Scanner as scanner
+
+
+class CSSImportNetworkRegressionTests(unittest.TestCase):
+    def test_css_parser_never_fetches_imports(self):
+        requested = threading.Event()
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requested.set()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/css")
+                self.end_headers()
+                self.wfile.write(b"body { color: red; }")
+
+            def log_message(self, _format, *_args):
+                return None
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+            analyzer = scanner.CSSAnalyzer(scanner.WCAGLevel.AA)
+            analyzer.analyze(
+                f'@import url("http://127.0.0.1:{port}/private-style");',
+                "synthetic.css",
+            )
+            self.assertFalse(requested.wait(0.2))
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
+
+class WebCommandCompletenessRegressionTests(unittest.TestCase):
+    def test_ci_mode_fails_and_reports_invalid_target(self):
+        runner = CliRunner()
+        with runner.isolated_filesystem():
+            result = runner.invoke(
+                scanner.web_command,
+                [
+                    "does-not-exist-audit.html",
+                    "--ci-mode",
+                    "--report-formats",
+                    "json",
+                    "--output-dir",
+                    "reports",
+                ],
+            )
+            self.assertEqual(result.exit_code, 1, result.output)
+            with Path("reports/report.json").open("r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+
+        self.assertEqual(payload["summary"]["analysis_status"], "incomplete")
+        self.assertTrue(payload["analysis_errors"])
+
+    def test_static_site_scope_discovers_and_analyzes_child_page(self):
+        requested_paths: list[str] = []
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                requested_paths.append(self.path)
+                body = (
+                    b"<!doctype html><html lang='en'><title>Child</title><body><main>Child</main></body></html>"
+                    if self.path == "/child"
+                    else b"<!doctype html><html lang='en'><title>Root</title><body><main><a href='/child'>Child</a></main></body></html>"
+                )
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, _format, *_args):
+                return None
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+            runner = CliRunner()
+            with runner.isolated_filesystem():
+                result = runner.invoke(
+                    scanner.web_command,
+                    [
+                        f"http://127.0.0.1:{port}/",
+                        "--allow-private-hosts",
+                        "--scope",
+                        "site",
+                        "--bulk-mode",
+                        "static",
+                        "--max-urls",
+                        "2",
+                        "--concurrency",
+                        "1",
+                        "--analysis-concurrency",
+                        "1",
+                        "--crawl-delay",
+                        "0",
+                        "--no-spell-check",
+                        "--report-formats",
+                        "json",
+                        "--output-dir",
+                        "reports",
+                    ],
+                )
+                self.assertEqual(result.exit_code, 0, result.output)
+                with Path("reports/report.json").open("r", encoding="utf-8") as handle:
+                    payload = json.load(handle)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
+        self.assertIn("/child", requested_paths)
+        self.assertIn(f"http://127.0.0.1:{port}/child", payload["all_urls_crawled"])
+
+
+class BrowserDnsBindingRegressionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_hostname_request_is_blocked_even_when_python_dns_looks_public(self):
+        tool = object.__new__(scanner.A11yPowerTool)
+        tool.config = {"allow_private_hosts": False}
+        route = SimpleNamespace(
+            request=SimpleNamespace(url="http://localhost/private-marker"),
+            abort=AsyncMock(),
+            continue_=AsyncMock(),
+        )
+
+        with patch.object(
+            scanner.socket,
+            "getaddrinfo",
+            return_value=[(None, None, None, None, ("203.0.113.10", 80))],
+        ):
+            await tool._browser_route_guard(route)
+
+        route.abort.assert_awaited_once_with("blockedbyclient")
+        route.continue_.assert_not_awaited()
 
 
 class _FakeContent:
