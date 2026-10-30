@@ -11,6 +11,8 @@ WCAG 2.2 Site and PDF Scanner examines websites, local HTML, and PDF documents t
 
 The scanner deliberately avoids claiming that automation proves conformance. Every result describes what was tested, what evidence was observed, and where human review is still required.
 
+> **Project status: maintained public release.** Version 5.0.3 is the current PyPI and GitHub release. The included sample and first-use walkthrough are synthetic evaluation assets, not an accessibility certification or evidence that the scanner has covered a particular live site.
+
 **Help improve the first-use path:** Accessibility practitioners and web developers can try a 15-minute [synthetic walkthrough and share feedback](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/discussions/22).
 
 Read the project's [accessibility statement](ACCESSIBILITY.md) for current support, known limitations, and feedback options.
@@ -295,6 +297,11 @@ The scanner is not a certified PDF/UA validator and does not replace a complete 
 ## Responsible use
 
 Scan only systems and documents you own or are authorized to test. Use conservative concurrency and crawl delays on shared systems. Private-network scanning requires the explicit `--allow-private-hosts` option.
+
+## Related Fusion projects
+
+- [M365 Incident Response Console](https://github.com/fusiontechstrategies/M365-Incident-Response-Console) and [Windows Admin Toolkit](https://github.com/fusiontechstrategies/Windows-Admin-Toolkit) provide separate evidence-first Microsoft operations workflows.
+- Explore the complete [Fusion Technology Strategies public portfolio](https://github.com/fusiontechstrategies/FusionTechStrategies).
 
 ## Development
 
