@@ -39,7 +39,7 @@ Changes to package metadata, release controls, or included files also require tw
 
 ## Style
 
-- Support Python 3.11 through 3.14.
+- Support Python 3.12 through 3.14.
 - Prefer standard-library features when they remove a large dependency without reducing capability.
 - Keep network and file operations bounded.
 - Use deterministic sorting for reports and discovery results.

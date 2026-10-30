@@ -1,5 +1,5 @@
 # Runtime dependencies for WCAG_Site_PDF_Scanner.py
-# Supported Python: 3.11 through 3.14
+# Supported Python: 3.12 through 3.14
 # Install: python -m pip install -r requirements.txt
 # Browser engine: python -m playwright install chromium
 

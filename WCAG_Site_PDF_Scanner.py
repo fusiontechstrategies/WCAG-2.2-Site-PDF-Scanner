@@ -256,6 +256,7 @@ class AccessibilityReport:
     passed_checks: List[PassedCheck] = field(default_factory=list)
     all_files_analyzed: Set[str] = field(default_factory=set)
     all_urls_crawled: Set[str] = field(default_factory=set)
+    analysis_errors: List[str] = field(default_factory=list)
     broken_links: DefaultDict[str, Set[str]] = field(default_factory=lambda: defaultdict(set))
     fixes_applied: DefaultDict[str, List[Dict[str, Any]]] = field(default_factory=lambda: defaultdict(list))
     analysis_duration: float = 0.0
@@ -290,6 +291,8 @@ class AccessibilityReport:
             "analysis_duration_seconds": round(self.analysis_duration, 2),
             "total_urls_crawled": len(self.all_urls_crawled),
             "total_files_analyzed": len(self.all_files_analyzed),
+            "analysis_status": "incomplete" if self.analysis_errors else "complete",
+            "analysis_errors": list(self.analysis_errors),
             "total_issues": len(self.issues),
             "total_passed_checks": len(self.passed_checks),
             "passed_check_scope": "Narrow automated checks with no detected failure; not criterion conformance",
@@ -1053,6 +1056,16 @@ _SPELL_ALLOWLIST = {
 
 # Suppress cssutils warnings
 cssutils.log.setLevel(logging.CRITICAL)
+
+
+def _deny_css_import_fetch(_url: str) -> tuple[None, bytes]:
+    """Prevent cssutils from performing implicit network requests for @imports."""
+    return None, b""
+
+
+def _parse_css_without_network(content: str):
+    """Parse CSS while keeping all stylesheet retrieval in the bounded fetch layer."""
+    return cssutils.CSSParser(fetcher=_deny_css_import_fetch).parseString(content)
 
 
 logger = logging.getLogger(__name__)
@@ -2223,7 +2236,7 @@ class CSSAnalyzer(BaseAnalyzer):
         _cap_logger.propagate = False
         cssutils.log.setLog(_cap_logger)
         try:
-            stylesheet = cssutils.parseString(css_content)
+            stylesheet = _parse_css_without_network(css_content)
         except Exception as e:
             logger.debug(f"Error parsing CSS content from {url_or_path}: {e}")
             self._add_issue("CSS_ANALYSIS", IssueSeverity.INFO,
@@ -2473,64 +2486,67 @@ class DynamicAnalyzer(BaseAnalyzer):
 
     async def _check_2_1_1_keyboard_navigation(self):
         """Criterion 2.1.1 (Level A): Checks that all interactive elements are keyboard operable."""
-        focusable_elements_query = 'a[href]:not([tabindex="-1"]), button:not([tabindex="-1"]), input:not([type="hidden"]):not([tabindex="-1"]), textarea:not([tabindex="-1"]), select:not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])'
-
-        all_focusable_elements_outerhtml = await self.page.eval_on_selector_all(
-            focusable_elements_query,
-            "elements => elements.map(element => element.outerHTML)",
+        focusable_elements_query = (
+            'a[href], button, input:not([type="hidden"]), textarea, select, '
+            '[tabindex], [contenteditable]:not([contenteditable="false"])'
         )
+        candidate_handles = await self.page.query_selector_all(focusable_elements_query)
+        handle_map = {}
+        html_map = {}
+        for index, handle in enumerate(candidate_handles):
+            is_tabbable = await handle.evaluate("""el => {
+                const style = getComputedStyle(el);
+                const hiddenAncestor = el.closest('[hidden], [inert], [aria-hidden="true"]');
+                return !el.disabled && !hiddenAncestor && el.tabIndex >= 0 &&
+                    style.display !== 'none' && style.visibility !== 'hidden' &&
+                    el.getClientRects().length > 0;
+            }""")
+            if not is_tabbable:
+                continue
+            audit_id = f"wcag-keyboard-{index}"
+            await handle.evaluate(
+                "(el, value) => el.setAttribute('data-wcag-keyboard-id', value)",
+                audit_id,
+            )
+            handle_map[audit_id] = handle
+            html_map[audit_id] = await handle.evaluate("el => el.outerHTML")
 
-        unique_elements_html_set = set(all_focusable_elements_outerhtml)
-
-        if not unique_elements_html_set:
+        expected_ids = set(handle_map)
+        if not expected_ids:
             self._add_passed("2.1.1", "No focusable elements found to test keyboard navigation.", elements_checked=0)
             return
 
-        elements_to_test_count = len(unique_elements_html_set)
-        all_focusable_elements_handles = await self.page.query_selector_all(focusable_elements_query)
-        handle_map = {await h.evaluate("el => el.outerHTML"): h for h in all_focusable_elements_handles}
+        elements_to_test_count = len(expected_ids)
 
         try:
             await self.page.focus('body')
             await self.page.wait_for_timeout(100)
 
-            visited_unique_elements_html = set()
+            visited_ids = set()
             max_tab_presses = elements_to_test_count * 3 + 5
 
-            for i in range(max_tab_presses):
+            for _ in range(max_tab_presses):
                 await self.page.keyboard.press('Tab')
                 await self.page.wait_for_timeout(50)
-
-                current_focused_element_handle = await self.page.evaluate_handle("document.activeElement")
-                if current_focused_element_handle:
-                    current_tag_name = await current_focused_element_handle.evaluate("el => el.tagName")
-                    current_outer_html = await current_focused_element_handle.evaluate("el => el.outerHTML")
-
-                    if (current_tag_name.lower() == 'body' or current_tag_name.lower() == 'html') and i > 0 and len(visited_unique_elements_html) < elements_to_test_count:
-                        self._add_issue("2.1.2", IssueSeverity.CRITICAL,
-                            "Keyboard focus unexpectedly returned to `<body>` or `<html>` prematurely, indicating possible keyboard trap.",
-                            "Keyboard users may become unable to reach all interactive elements or exit a specific component.",
-                            selector="body", suggested_fix="Ensure all interactive elements are reachable by keyboard, and that focus can exit all components.")
-                        break
-
-                    if current_outer_html in unique_elements_html_set:
-                        visited_unique_elements_html.add(current_outer_html)
-
-                    if len(visited_unique_elements_html) == elements_to_test_count:
-                        logger.debug("All unique focusable elements visited. Ending tabbing sequence.")
-                        break
-
-                else:
-                    self._add_issue("2.1.1", IssueSeverity.CRITICAL,
-                        "Keyboard focus lost to the browser chrome or unfocusable area during tabbing.",
-                        "Keyboard users may become disoriented or unable to navigate without clear focus indication.",
-                        selector="document", suggested_fix="Ensure focus always remains on a valid, visible element within the page.")
+                focus_state = await self.page.evaluate("""() => ({
+                    tag: document.activeElement ? document.activeElement.tagName.toLowerCase() : '',
+                    auditId: document.activeElement ? document.activeElement.getAttribute('data-wcag-keyboard-id') : null
+                })""")
+                if focus_state['auditId'] in expected_ids:
+                    visited_ids.add(focus_state['auditId'])
+                if len(visited_ids) == elements_to_test_count:
+                    break
+                if focus_state['tag'] in {'body', 'html', ''} and visited_ids:
+                    # Reaching the document boundary is a normal completed tab cycle, not
+                    # evidence of a keyboard trap. Any genuinely missed controls are
+                    # reported below as unreachable.
                     break
 
-            unvisited_elements_html = unique_elements_html_set - visited_unique_elements_html
-            if unvisited_elements_html:
-                for el_html in list(unvisited_elements_html)[:5]:
-                    element_handle_to_screenshot = handle_map.get(el_html)
+            unvisited_ids = expected_ids - visited_ids
+            if unvisited_ids:
+                for audit_id in list(unvisited_ids)[:5]:
+                    el_html = html_map[audit_id]
+                    element_handle_to_screenshot = handle_map.get(audit_id)
                     screenshot_filename = None
                     element_selector = "Unknown"
                     if element_handle_to_screenshot:
@@ -2548,7 +2564,7 @@ class DynamicAnalyzer(BaseAnalyzer):
                         suggested_fix="Ensure all interactive elements are reachable via `Tab` key. Check `tabindex` values, CSS properties, or JavaScript that may remove elements from the natural tab order.",
                         screenshot_filename=screenshot_filename)
 
-            if not unvisited_elements_html:
+            if not unvisited_ids:
                 self._add_passed("2.1.1", "All detected interactive elements appear to be keyboard operable.", elements_checked=elements_to_test_count)
 
         except PlaywrightError as pe:
@@ -2557,6 +2573,10 @@ class DynamicAnalyzer(BaseAnalyzer):
             logger.error(f"Error during keyboard navigation check for {self.page.url}: {e}", exc_info=True)
         finally:
             await self.page.focus('body')
+            await self.page.eval_on_selector_all(
+                '[data-wcag-keyboard-id]',
+                "elements => elements.forEach(element => element.removeAttribute('data-wcag-keyboard-id'))",
+            )
 
     async def _check_2_4_7_focus_visible(self):
         """Criterion 2.4.7 (Level AA): Checks if focus indicators are visible and sufficiently contrasted."""
@@ -5039,7 +5059,7 @@ class FixerTUI:
 
         # CSS modification is more complex than HTML
         try:
-            stylesheet = cssutils.parseString(file_content)
+            stylesheet = _parse_css_without_network(file_content)
             modified = False
             target_selector = issue.selector or issue.additional_info.get('css_selector', '')
             for rule in stylesheet.cssRules:
@@ -6290,6 +6310,25 @@ class A11yPowerTool:
         self.playwright_instance = None
         self.browser: Optional[Browser] = None
 
+    def _record_analysis_error(self, message: str, target: Optional[str] = None):
+        """Record a required analysis failure in every report format."""
+        if message in self.report.analysis_errors:
+            return
+        self.report.analysis_errors.append(message)
+        location = target or self.config.get('target', '')
+        self.report.issues.append(AccessibilityIssue(
+            criterion="ANALYSIS_ERROR",
+            criterion_name="Analysis completeness",
+            level=self._level,
+            severity=IssueSeverity.CRITICAL,
+            mode=AnalysisMode.STATIC,
+            description=message,
+            impact="The scan is incomplete and must not be treated as a successful accessibility result.",
+            suggested_fix="Resolve the analysis failure and rerun the complete requested scan.",
+            url=location if str(location).startswith('http') else None,
+            file_path=None if str(location).startswith('http') else str(location),
+        ))
+
     async def _browser_route_guard(self, route):
         """Block unsafe browser requests, including hostile subresources."""
         request_url = route.request.url
@@ -6303,10 +6342,18 @@ class A11yPowerTool:
             return
 
         hostname = parsed.hostname or ""
+        allow_private = self.config.get('allow_private_hosts', False)
         try:
             literal_ip = ipaddress.ip_address(hostname)
             addresses = [str(literal_ip)]
         except ValueError:
+            if not allow_private:
+                logger.warning(
+                    "Blocked browser hostname because Chromium DNS cannot be bound to the validated address: %s",
+                    hostname,
+                )
+                await route.abort("blockedbyclient")
+                return
             try:
                 default_port = 443 if parsed.scheme == "https" else 80
                 infos = await asyncio.wait_for(
@@ -6319,7 +6366,7 @@ class A11yPowerTool:
                 await route.abort("failed")
                 return
 
-        if any(_ip_is_blocked(address, self.config.get('allow_private_hosts', False)) for address in addresses):
+        if any(_ip_is_blocked(address, allow_private) for address in addresses):
             logger.warning("Blocked browser request to non-public host: %s", hostname)
             await route.abort("blockedbyclient")
             return
@@ -6342,6 +6389,14 @@ class A11yPowerTool:
         """Initializes Playwright browser instance."""
         if self.browser:
             return
+        if not self.config.get('allow_private_hosts', False):
+            hostname = urlparse(self.config.get('target', '')).hostname or ''
+            try:
+                ipaddress.ip_address(hostname)
+            except ValueError as exc:
+                raise RuntimeError(
+                    "Dynamic browser analysis of hostnames is disabled because Chromium DNS cannot be pinned to the validated address; use --bulk-mode static"
+                ) from exc
         try:
             if not PLAYWRIGHT_READY or async_playwright is None:
                 raise PlaywrightError("Playwright is not installed")
@@ -6384,11 +6439,14 @@ class A11yPowerTool:
         # Determine which analysis paths to take
         can_run_dynamic_analysis = False
         if is_url_target:
-            try:
-                await self._initialize_browser()
-                can_run_dynamic_analysis = True
-            except Exception:
-                console.print("[bold yellow]Dynamic analysis (Playwright/Axe) will be skipped due to browser launch failure.[/bold yellow]")
+            if (self.config.get('bulk_mode') or 'tiered').lower() != 'static':
+                try:
+                    await self._initialize_browser()
+                    can_run_dynamic_analysis = True
+                except Exception:
+                    message = "Dynamic analysis failed because the Playwright browser could not launch."
+                    self._record_analysis_error(message, target)
+                    console.print("[bold yellow]Dynamic analysis (Playwright/Axe) will be skipped due to browser launch failure.[/bold yellow]")
 
         elif is_path_like:
             if Path(target).is_dir():
@@ -6396,41 +6454,24 @@ class A11yPowerTool:
             elif Path(target).is_file():
                 await self._run_for_local_file(target)
             else:
-                console.print(f"[bold red]Error: Target '{target}' is not a valid URL or local file/directory.[/bold red]")
-                return
+                message = f"Target '{target}' is not a valid URL or local file/directory."
+                self._record_analysis_error(message, target)
+                console.print(f"[bold red]Error: {message}[/bold red]")
             console.print("[yellow]Dynamic analysis (Playwright/Axe) is generally skipped for local file:// targets due to browser security restrictions (CORS).[/yellow]")
             console.print("[yellow]To enable dynamic analysis for local files, consider serving them via a local HTTP server.[/yellow]")
             can_run_dynamic_analysis = False
 
         else:
-            console.print(f"[bold red]Error: Target '{target}' is not a valid URL or existing local file/directory.[/bold red]")
-            return
+            message = f"Target '{target}' is not a valid URL or existing local file/directory."
+            self._record_analysis_error(message, target)
+            console.print(f"[bold red]Error: {message}[/bold red]")
 
         # If dynamic capabilities are available and target is a URL
         if can_run_dynamic_analysis and is_url_target:
             await self._run_for_url(target)
         elif is_url_target and not can_run_dynamic_analysis:
-            # Fallback: fetch HTML via aiohttp and run static analysis only
-            console.print("[yellow]Falling back to static-only analysis for URL target (no browser available).[/yellow]")
-            try:
-                async with aiohttp.ClientSession(connector=_safe_connector(self.config.get('allow_private_hosts', False))) as session:
-                    async with _safe_get(
-                        session, target,
-                        allow_private=self.config.get('allow_private_hosts', False),
-                        timeout=aiohttp.ClientTimeout(total=30),
-                        headers={'User-Agent': self.config.get('user_agent', DEFAULT_USER_AGENT)},
-                    ) as resp:
-                        expected_host = (urlparse(target).hostname or '').lower().rstrip('.')
-                        if not _same_host_family(str(resp.url), expected_host, True):
-                            raise ValueError("Target redirected outside its hostname family")
-                        if resp.status == 200:
-                            html_content = await _read_capped_text(resp)
-                            self.report.all_urls_crawled.add(target)
-                            await self._analyze_page_content(html_content, target, page=None)
-                        else:
-                            console.print(f"[bold red]HTTP {resp.status} when fetching {target}[/bold red]")
-            except Exception as e:
-                console.print(f"[bold red]Failed to fetch URL for static analysis: {e}[/bold red]")
+            console.print("[yellow]Using static-only analysis for URL target.[/yellow]")
+            await self._run_for_url(target)
 
         # Ensure browser is closed if it was launched
         if self.browser:
@@ -6459,7 +6500,7 @@ class A11yPowerTool:
 
         if self.config.get('ci_mode'):
             unfixed_critical_serious = [i for i in self.report.issues if i.severity in [IssueSeverity.CRITICAL, IssueSeverity.SERIOUS] and not i.fixed]
-            if unfixed_critical_serious:
+            if self.report.analysis_errors or unfixed_critical_serious:
                 console.print(f"[bold red]CI Mode Failure: {len(unfixed_critical_serious)} unfixed critical or serious issues found. Exiting with error code 1.[/bold red]")
                 sys.exit(1)
             else:
@@ -6629,11 +6670,12 @@ class A11yPowerTool:
 
         else:  # page scope analyzes only the single target page
             console.print("[cyan]Scope:[/cyan] current page only.")
-            self.report.all_urls_crawled.add(url)
             urls_to_scan = [url]
 
         if not urls_to_scan:
-            console.print("[bold yellow]No URLs to analyze after crawl/initial target check.[/bold yellow]")
+            message = "No URLs were successfully discovered for analysis."
+            self._record_analysis_error(message, url)
+            console.print(f"[bold yellow]{message}[/bold yellow]")
             return
 
         console.print(f"Starting analysis of {len(urls_to_scan)} URL(s)...")
@@ -6827,8 +6869,14 @@ class A11yPowerTool:
                                                              collect_fingerprint=(u in consistency_urls))
                         except PlaywrightError as e:
                             logger.error(f"Playwright error analyzing {u}: {e}")
+                            self._record_analysis_error(
+                                f"Dynamic analysis failed for {u}: {type(e).__name__}", u
+                            )
                         except Exception as e:
                             logger.error(f"Error analyzing {u}: {e}")
+                            self._record_analysis_error(
+                                f"Dynamic analysis failed for {u}: {type(e).__name__}", u
+                            )
                         finally:
                             if page:
                                 try:
@@ -6855,14 +6903,22 @@ class A11yPowerTool:
                                 expected_host = (urlparse(u).hostname or '').lower().rstrip('.')
                                 if not _same_host_family(str(resp.url), expected_host, True):
                                     raise ValueError("Static request redirected outside scan scope")
-                                self.report.all_urls_crawled.add(u)
                                 if resp.status < 400 and 'html' in resp.headers.get('Content-Type', '').lower():
                                     html = await _read_capped_text(resp)
+                                    self.report.all_urls_crawled.add(u)
+                                else:
+                                    self._record_analysis_error(
+                                        f"Static analysis could not retrieve HTML from {u} (HTTP {resp.status}).",
+                                        u,
+                                    )
                             if html:
                                 await self._analyze_page_content(html, u, page=None, session=session,
                                                                  collect_fingerprint=(u in consistency_urls))
                         except Exception as e:
                             logger.debug(f"Static analysis failed for {u}: {e}")
+                            self._record_analysis_error(
+                                f"Static analysis failed for {u}: {type(e).__name__}", u
+                            )
                         finally:
                             progress.update(scan_task, advance=1, description=f"Analyzing [magenta]{u[:70]}[/magenta]")
 
@@ -6893,6 +6949,10 @@ class A11yPowerTool:
                     await self._analyze_page_content(content, file_uri, page=None)
                 except Exception as e:
                     logger.error(f"Could not analyze file {file_path}: {e}")
+                    self._record_analysis_error(
+                        f"Could not analyze local file {file_path}: {type(e).__name__}",
+                        str(file_path),
+                    )
                 progress.advance(scan_task)
 
     async def _run_for_local_file(self, file_path: str):
@@ -6906,6 +6966,10 @@ class A11yPowerTool:
             await self._analyze_page_content(content, file_uri, page=None)
         except Exception as e:
             logger.error(f"Could not analyze file {file_path}: {e}")
+            self._record_analysis_error(
+                f"Could not analyze local file {file_path}: {type(e).__name__}",
+                str(file_path),
+            )
 
 
 # ==============================================================================

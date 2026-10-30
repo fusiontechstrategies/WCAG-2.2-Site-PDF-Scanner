@@ -19,6 +19,9 @@ PAGE_HTML = b"""<!doctype html>
   <button id="second" type="button">Open</button>
   <input id="third" aria-label="Search">
   <button id="excluded" type="button" tabindex="-1">Excluded</button>
+  <button type="button" disabled>Open</button>
+  <button type="button" hidden>Open</button>
+  <div inert><button type="button">Open</button></div>
   <main id="target">Target</main>
 </body>
 </html>

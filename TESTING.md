@@ -2,6 +2,12 @@
 
 Tests use only synthetic local fixtures and public dependency metadata. No live scan output is stored in this repository.
 
+## Current source support
+
+The maintained source and CI matrix support Python 3.12 through 3.14. Older
+version references below are retained as point-in-time evidence for published
+release candidates; they do not describe the current support floor.
+
 ## 5.0.2 release-readiness validation
 
 The 5.0.2 candidate tree was validated on August 28, 2026. This is release-readiness evidence, not a tag, GitHub release, PyPI publication, or conformance claim.

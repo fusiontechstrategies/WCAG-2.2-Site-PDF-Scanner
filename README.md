@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/ci.yml/badge.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/codeql.yml/badge.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/actions/workflows/codeql.yml)
-[![Python 3.11 through 3.14](https://img.shields.io/badge/Python-3.11%20through%203.14-3776AB.svg)](https://www.python.org/downloads/)
+[![Python 3.12 through 3.14](https://img.shields.io/badge/Python-3.12%20through%203.14-3776AB.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f.svg)](https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/LICENSE)
 
 One Python runtime file. Two accessibility surfaces. Evidence you can inspect and defend.
@@ -108,9 +108,15 @@ Read [SECURITY.md](SECURITY.md) before scanning untrusted or internal content.
 
 ## Requirements
 
-- Python 3.11 through 3.14
+- Python 3.12 through 3.14
 - Windows, macOS, or Linux
 - Chromium installed through Playwright for dynamic web analysis
+
+For remote hostnames, use `--bulk-mode static`. Browser analysis is fail-closed
+unless the target is an IP literal or `--allow-private-hosts` is explicitly set,
+because Chromium cannot bind its independent DNS connection to the address
+validated by the scanner. This prevents DNS rebinding from bypassing the
+private-address policy.
 
 ## Installation
 
