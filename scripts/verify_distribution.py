@@ -70,7 +70,7 @@ def _verify_wheel(wheel_path: Path, version: str, repository_root: Path) -> None
         python_specifiers = {
             value.strip() for value in (metadata.get("Requires-Python") or "").split(",") if value.strip()
         }
-        if python_specifiers != {">=3.11", "<3.15"}:
+        if python_specifiers != {">=3.12", "<3.15"}:
             raise ValueError(f"unexpected Python range: {metadata.get('Requires-Python')}")
         if set(metadata.get_all("Requires-Dist", [])) != _runtime_requirements(repository_root / "requirements.txt"):
             raise ValueError("wheel dependency metadata does not match requirements.txt")
