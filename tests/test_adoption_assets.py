@@ -48,15 +48,17 @@ class PublicDocumentationTests(unittest.TestCase):
                     missing_links.append(f"{path.relative_to(REPOSITORY_ROOT)} -> {raw_target}")
         self.assertEqual(missing_links, [])
 
-    def test_readme_sample_links_follow_the_current_checkout(self):
+    def test_readme_sample_links_work_on_package_indexes(self):
         readme = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("(examples/sample-report/report-preview.png)", readme)
-        self.assertIn("](examples/sample-report/report.html)", readme)
-        self.assertIn("](examples/sample-report/report.json)", readme)
-        self.assertIn("](examples/sample-site/index.html)", readme)
-        self.assertIn("](examples/sample-site/synthetic-accessibility-review.pdf)", readme)
-        self.assertNotIn("/main/examples/sample-report/", readme)
-        self.assertNotIn("/main/examples/sample-site/", readme)
+        pages = "https://fusiontechstrategies.github.io/WCAG-2.2-Site-PDF-Scanner/"
+        source = "https://github.com/fusiontechstrategies/WCAG-2.2-Site-PDF-Scanner/blob/main/"
+        self.assertIn(f"]({pages}report-preview.png)", readme)
+        self.assertIn(f"]({pages}report.json)", readme)
+        self.assertIn(f"]({source}examples/sample-report/report.html)", readme)
+        self.assertIn(f"]({source}examples/sample-site/index.html)", readme)
+        self.assertIn(f"]({source}examples/sample-site/synthetic-accessibility-review.pdf)", readme)
+        self.assertNotRegex(readme, r'\]\((?!https://)[^)]+\)')
+        self.assertNotRegex(readme, r'src="(?!https://)[^"]+"')
 
 
 class PackageMetadataTests(unittest.TestCase):
