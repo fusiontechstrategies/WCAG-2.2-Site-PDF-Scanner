@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import re
 import tempfile
 import unittest
@@ -9,6 +10,7 @@ from urllib.parse import unquote
 from PIL import Image
 
 import WCAG_Site_PDF_Scanner as scanner
+from examples.build_linked_pdf_fixture import build_fixture
 from examples.build_sample_report import build_sample_report
 
 
@@ -52,6 +54,9 @@ class PublicDocumentationTests(unittest.TestCase):
         self.assertIn("](examples/sample-report/report.html)", readme)
         self.assertIn("](examples/sample-report/report.json)", readme)
         self.assertIn("](examples/sample-site/index.html)", readme)
+        self.assertIn(
+            "](examples/sample-site/synthetic-accessibility-review.pdf)", readme
+        )
         self.assertNotIn("/main/examples/sample-report/", readme)
         self.assertNotIn("/main/examples/sample-site/", readme)
 
@@ -86,6 +91,22 @@ class SampleReportTests(unittest.TestCase):
         with Image.open(preview) as image:
             self.assertEqual(image.size, (1440, 900))
             self.assertEqual(image.format, "PNG")
+
+    def test_linked_pdf_fixture_is_stable_and_referenced(self):
+        sample_site = REPOSITORY_ROOT / "examples" / "sample-site"
+        pdf = sample_site / "synthetic-accessibility-review.pdf"
+        value = pdf.read_bytes()
+        self.assertTrue(value.startswith(b"%PDF-1.4"))
+        self.assertEqual(
+            hashlib.sha256(value).hexdigest(),
+            "cab8bc0a59af0cca9649fdcc1c183c1a48ccaabba0fbda9c8b1e52e2b3450649",
+        )
+        html = (sample_site / "index.html").read_text(encoding="utf-8")
+        self.assertIn('href="synthetic-accessibility-review.pdf"', html)
+
+        with tempfile.TemporaryDirectory(prefix="wcag-linked-pdf-") as directory:
+            generated = build_fixture(Path(directory) / pdf.name)
+            self.assertEqual(generated.read_bytes(), value)
 
     def test_fixture_contains_no_local_or_customer_identifiers(self):
         fixture_dir = REPOSITORY_ROOT / "examples" / "sample-report"
