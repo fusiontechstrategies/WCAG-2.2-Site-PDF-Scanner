@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 5.0.4 - 2026-11-18
+
+### Added
+
+- Published an interactive synthetic report preview and included a reproducible sample PDF in the source tree.
+
+### Corrected
+
+- Kept the package description, pinned install example, and runtime version aligned.
+
 ### Changed
 
 - Raised the supported Python floor to 3.11 because Pillow 13 no longer supports Python 3.10.

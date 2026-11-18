@@ -993,7 +993,7 @@ class ColorUtils:
 # CONSTANTS
 # ==============================================================================
 
-APP_VERSION = "5.0.3"
+APP_VERSION = "5.0.4"
 APP_NAME = "WCAG 2.2 Site and PDF Scanner"
 DEFAULT_USER_AGENT = f"WCAG-Site-PDF-Scanner/{APP_VERSION} (+accessibility testing)"
 
