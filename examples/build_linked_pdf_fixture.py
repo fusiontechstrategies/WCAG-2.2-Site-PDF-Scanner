@@ -15,9 +15,7 @@ OUTPUT = Path(__file__).with_name("sample-site") / "synthetic-accessibility-revi
 
 def build_fixture(output: Path = OUTPUT) -> Path:
     output.parent.mkdir(parents=True, exist_ok=True)
-    document = canvas.Canvas(
-        str(output), pagesize=LETTER, invariant=1, pageCompression=0
-    )
+    document = canvas.Canvas(str(output), pagesize=LETTER, invariant=1, pageCompression=0)
     document.setAuthor("FusionTech Strategies")
     document.setCreator("WCAG 2.2 Site and PDF Scanner synthetic fixture builder")
     document.setSubject("Synthetic document for accessibility scanner evaluation")

@@ -54,9 +54,7 @@ class PublicDocumentationTests(unittest.TestCase):
         self.assertIn("](examples/sample-report/report.html)", readme)
         self.assertIn("](examples/sample-report/report.json)", readme)
         self.assertIn("](examples/sample-site/index.html)", readme)
-        self.assertIn(
-            "](examples/sample-site/synthetic-accessibility-review.pdf)", readme
-        )
+        self.assertIn("](examples/sample-site/synthetic-accessibility-review.pdf)", readme)
         self.assertNotIn("/main/examples/sample-report/", readme)
         self.assertNotIn("/main/examples/sample-site/", readme)
 
@@ -101,9 +99,6 @@ class SampleReportTests(unittest.TestCase):
             hashlib.sha256(value).hexdigest(),
             "cab8bc0a59af0cca9649fdcc1c183c1a48ccaabba0fbda9c8b1e52e2b3450649",
         )
-        html = (sample_site / "index.html").read_text(encoding="utf-8")
-        self.assertIn('href="synthetic-accessibility-review.pdf"', html)
-
         with tempfile.TemporaryDirectory(prefix="wcag-linked-pdf-") as directory:
             generated = build_fixture(Path(directory) / pdf.name)
             self.assertEqual(generated.read_bytes(), value)

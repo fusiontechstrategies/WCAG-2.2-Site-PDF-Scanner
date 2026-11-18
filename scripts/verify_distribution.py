@@ -70,14 +70,9 @@ def _verify_wheel(wheel_path: Path, version: str, repository_root: Path) -> None
         encoded_description = metadata.get_payload(decode=True)
         if not isinstance(encoded_description, bytes):
             raise ValueError("wheel long description is not an encoded text payload")
-        packaged_description = (
-            encoded_description.decode("utf-8").replace("\r\n", "\n").rstrip("\n")
-        )
+        packaged_description = encoded_description.decode("utf-8").replace("\r\n", "\n").rstrip("\n")
         source_description = (
-            (repository_root / "README.md")
-            .read_text(encoding="utf-8")
-            .replace("\r\n", "\n")
-            .rstrip("\n")
+            (repository_root / "README.md").read_text(encoding="utf-8").replace("\r\n", "\n").rstrip("\n")
         )
         if packaged_description != source_description:
             raise ValueError("wheel long description does not match README.md")
