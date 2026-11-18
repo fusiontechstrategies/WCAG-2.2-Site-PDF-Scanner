@@ -1,0 +1,140 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 8 0 R /MediaBox [ 0 0 612 792 ] /Parent 7 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/PageMode /UseNone /Pages 7 0 R /Type /Catalog
+>>
+endobj
+6 0 obj
+<<
+/Author (FusionTech Strategies) /CreationDate (D:20000101000000+00'00') /Creator (WCAG 2.2 Site and PDF Scanner synthetic fixture builder) /Keywords () /ModDate (D:20000101000000+00'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (Synthetic document for accessibility scanner evaluation) /Title (Community services accessibility review) /Trapped /False
+>>
+endobj
+7 0 obj
+<<
+/Count 1 /Kids [ 4 0 R ] /Type /Pages
+>>
+endobj
+8 0 obj
+<<
+/Length 2460
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+.090196 .196078 .301961 rg
+n 0 684 612 108 re f*
+1 1 1 rg
+BT /F2 23 Tf 27.6 TL ET
+BT 1 0 0 1 54 726 Tm (Community services accessibility review) Tj T* ET
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 54 704 Tm (Synthetic training fixture - no customer or live-scan data) Tj T* ET
+.090196 .196078 .301961 rg
+BT /F2 15 Tf 18 TL ET
+BT 1 0 0 1 54 642 Tm (Purpose) Tj T* ET
+.290196 .333333 .376471 rg
+BT /F1 10.5 Tf 12.6 TL ET
+BT 1 0 0 1 54 621 Tm 15 TL (This one-page document is paired with the local HTML training page.) Tj T* (It gives the PDF scanner a stable, inspectable input and gives reviewers) Tj T* (a concrete artifact for comparing automated evidence with manual review.) Tj T* ET
+.090196 .196078 .301961 rg
+BT /F2 15 Tf 18 TL ET
+BT 1 0 0 1 54 542 Tm (Manual review queue) Tj T* ET
+.290196 .333333 .376471 rg
+BT /F1 10.5 Tf 12.6 TL ET
+.078431 .423529 .580392 rg
+n
+63.2 521 m
+63.2 522.215 62.21503 523.2 61 523.2 c
+59.78497 523.2 58.8 522.215 58.8 521 c
+58.8 519.785 59.78497 518.8 61 518.8 c
+62.21503 518.8 63.2 519.785 63.2 521 c
+f*
+.290196 .333333 .376471 rg
+BT 1 0 0 1 72 518 Tm (Confirm the document reading order with a keyboard and screen reader.) Tj T* ET
+.078431 .423529 .580392 rg
+n
+63.2 494 m
+63.2 495.215 62.21503 496.2 61 496.2 c
+59.78497 496.2 58.8 495.215 58.8 494 c
+58.8 492.785 59.78497 491.8 61 491.8 c
+62.21503 491.8 63.2 492.785 63.2 494 c
+f*
+.290196 .333333 .376471 rg
+BT 1 0 0 1 72 491 Tm (Verify that headings and lists are represented in the structure tree.) Tj T* ET
+.078431 .423529 .580392 rg
+n
+63.2 467 m
+63.2 468.215 62.21503 469.2 61 469.2 c
+59.78497 469.2 58.8 468.215 58.8 467 c
+58.8 465.785 59.78497 464.8 61 464.8 c
+62.21503 464.8 63.2 465.785 63.2 467 c
+f*
+.290196 .333333 .376471 rg
+BT 1 0 0 1 72 464 Tm (Check color, zoom, reflow, document language, title, and link purpose.) Tj T* ET
+.078431 .423529 .580392 rg
+n
+63.2 440 m
+63.2 441.215 62.21503 442.2 61 442.2 c
+59.78497 442.2 58.8 441.215 58.8 440 c
+58.8 438.785 59.78497 437.8 61 437.8 c
+62.21503 437.8 63.2 438.785 63.2 440 c
+f*
+.290196 .333333 .376471 rg
+BT 1 0 0 1 72 437 Tm (Record limitations; do not treat an automated pass as conformance.) Tj T* ET
+.835294 .870588 .901961 RG
+n 54 122 m 558 122 l S
+.290196 .333333 .376471 rg
+BT /F1 9 Tf 10.8 TL ET
+BT 1 0 0 1 54 96 Tm (Expected boundary: automated inspection supplies evidence, not certification.) Tj T* ET
+BT 1 0 0 1 440.595 72 Tm (Synthetic fixture | Page 1 of 1) Tj T* ET
+ 
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000514 00000 n 
+0000000582 00000 n 
+0000000976 00000 n 
+0000001035 00000 n 
+trailer
+<<
+/ID 
+[<41d762ca2de76f982fb5df7ea638f670><41d762ca2de76f982fb5df7ea638f670>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 6 0 R
+/Root 5 0 R
+/Size 9
+>>
+startxref
+3546
+%%EOF

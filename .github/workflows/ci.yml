@@ -58,6 +58,7 @@ jobs:
           tests.test_adoption_assets
           tests.test_normalize_sdist
           tests.test_normalize_wheel
+          tests.test_release_description_coherence
           tests.test_release_assets
 
       - name: Lint
@@ -138,6 +139,7 @@ jobs:
           tests.test_adoption_assets
           tests.test_normalize_sdist
           tests.test_normalize_wheel
+          tests.test_release_description_coherence
           tests.test_release_assets
 
       - name: Lint

@@ -67,6 +67,15 @@ def _verify_wheel(wheel_path: Path, version: str, repository_root: Path) -> None
             raise ValueError(f"unexpected project name: {metadata.get('Name')}")
         if metadata.get("Version") != version:
             raise ValueError(f"unexpected project version: {metadata.get('Version')}")
+        encoded_description = metadata.get_payload(decode=True)
+        if not isinstance(encoded_description, bytes):
+            raise ValueError("wheel long description is not an encoded text payload")
+        packaged_description = encoded_description.decode("utf-8").replace("\r\n", "\n").rstrip("\n")
+        source_description = (
+            (repository_root / "README.md").read_text(encoding="utf-8").replace("\r\n", "\n").rstrip("\n")
+        )
+        if packaged_description != source_description:
+            raise ValueError("wheel long description does not match README.md")
         python_specifiers = {
             value.strip() for value in (metadata.get("Requires-Python") or "").split(",") if value.strip()
         }
@@ -98,9 +107,12 @@ def _verify_sdist(sdist_path: Path, repository_root: Path) -> None:
             "pyproject.toml",
             "requirements.txt",
             "requirements-build.txt",
+            "examples/build_linked_pdf_fixture.py",
             "examples/build_sample_report.py",
             "examples/sample-report/report.html",
             "examples/sample-report/report.json",
+            "examples/sample-site/index.html",
+            "examples/sample-site/synthetic-accessibility-review.pdf",
             "scripts/normalize_sdist.py",
             "scripts/normalize_wheel.py",
             "scripts/prepare_release.py",
@@ -117,8 +129,11 @@ def _verify_sdist(sdist_path: Path, repository_root: Path) -> None:
             "pyproject.toml",
             "requirements.txt",
             "requirements-build.txt",
+            "examples/build_linked_pdf_fixture.py",
             "examples/sample-report/report.html",
             "examples/sample-report/report.json",
+            "examples/sample-site/index.html",
+            "examples/sample-site/synthetic-accessibility-review.pdf",
             "scripts/normalize_sdist.py",
             "scripts/normalize_wheel.py",
             "scripts/prepare_release.py",
